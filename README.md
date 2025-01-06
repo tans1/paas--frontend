@@ -1,46 +1,90 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Frontend Project
 
-## Available Scripts
+## Project Setup
 
-In the project directory, you can run:
+```bash
+$ npm install
+```
 
-### `yarn start`
+## Compile and Run the Project
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+# development
+$ npm run start
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# watch mode
+$ npm run start:dev
 
-### `yarn test`
+# production mode
+$ npm run start:prod
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Run Tests
 
-### `yarn build`
+```bash
+# unit tests
+$ npm run test
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# e2e tests
+$ npm run test:e2e
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# test coverage
+$ npm run test:cov
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Contribution Guidelines
 
-### `yarn eject`
+### 1. Clone the Repository
+Clone the repository to your local machine:
+```bash
+git clone https://github.com/your-team/repository-name.git
+cd repository-name
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 2. Create a New Branch
+Always create a new branch for your changes:
+```bash
+git checkout -b feature/your-branch-name
+```
+Use a descriptive branch name that reflects the task or feature, e.g., `feature/login-page` or `bugfix/fix-login-error`.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 3. Make Your Changes
+Implement your changes in the appropriate files. Ensure your work aligns with the project's coding standards and conventions.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 4. Commit Your Changes
+Stage and commit your changes with a clear and descriptive commit message:
+```bash
+git add .
+git commit -m "Descriptive message about your changes"
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 5. Sync With the Main Branch
+Before pushing your branch, ensure it's up to date with the latest changes from the main branch:
+```bash
+git fetch origin
+git checkout main
+git pull origin main
+git checkout feature/your-branch-name
+git merge main
+```
+Resolve any merge conflicts, if necessary.
 
-## Learn More
+### 6. Push Your Changes
+Push your branch to the remote repository:
+```bash
+git push origin feature/your-branch-name
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 7. Create a Pull Request (PR)
+1. Go to the repository on GitHub.
+2. Navigate to the **Pull Requests** tab and click the **New Pull Request** button.
+3. Select your branch as the source branch and `main` as the target branch.
+4. Add a clear and concise title and description for your PR, explaining what you’ve changed and why.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 8. Assign a Reviewer and Notify Them
+1. Assign a reviewer to your PR using GitHub's **Assignees** feature.
+2. Notify the reviewer via Telegram.
+
+### 9. Respond to Feedback
+Address any feedback provided by the reviewer promptly. Once all changes are approved, the reviewer will merge the PR into the main branch.
