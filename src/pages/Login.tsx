@@ -59,7 +59,7 @@ const Login = () => {
     setLoginError(""); // Clear any previous error
 
     try {
-      const response = await axios.post("https://paas-backend-1idw.onrender.com/auth/login", {
+      const response = await axios.post("http://localhost:3000/auth/login", {
         email: formData.email,
         password: formData.password,
       });
@@ -147,7 +147,7 @@ const Login = () => {
         <div className="mt-6">
           {/* Google Login */}
           <a
-            href="https://paas-backend-1idw.onrender.com/oauth/google"
+            href="http://localhost:3000/oauth/google"
             className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300"
           >
             <img
@@ -160,7 +160,7 @@ const Login = () => {
 
           {/* GitHub Login */}
           <a
-            href="https://paas-backend-1idw.onrender.com/oauth/github"
+            href="http://localhost:3000/oauth/github"
             className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300"
           >
             <img

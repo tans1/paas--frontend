@@ -75,7 +75,7 @@ const Register = () => {
     try {
       console.log("formdata", formData);
       const response = await axios.post(
-        "http://paas-backend-1idw.onrender.com/auth/signup",
+        "https://paas-backend-1idw.onrender.com/auth/signup",
         {
           name: formData.name,
           email: formData.email,
