@@ -6,7 +6,7 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuth();
 
   // Always return either a valid JSX element or null
-  return isAuthenticated ? <Navigate to="/" /> : children;
+  return isAuthenticated ? <Navigate to="/dashboard" /> : children;
 };
 
 export default PublicRoute;

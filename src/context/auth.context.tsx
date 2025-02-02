@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ReactNode } from 'react'; // ✅ Correct placement
+import { useNavigate } from 'react-router';
 
 const AuthContext = createContext({
   isAuthenticated: false,
@@ -9,6 +10,7 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -23,6 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('authToken');
     setIsAuthenticated(false);
+ 
   };
 
   return (

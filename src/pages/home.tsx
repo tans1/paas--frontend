@@ -1,9 +1,18 @@
-
+import Footer from "../components/home/footer/footer";
+import Navbar from "../components/home/header/navbar";
+import Features from "../components/home/info/features";
+import Info from "../components/home/info/info";
+import Intro from "../components/home/intro/intro";
+import Pricing from "../components/home/pricing/pricing";
 function Home(){
 
     return (
-        <div>
-            Home
+        <div className="bg-gradient-to-tr from-indigo-100 to-white">
+            <Intro />
+            <Pricing />
+            <Info />
+            <Features />
+            <Footer />
         </div>
     )
 }
