@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { ReactNode } from 'react'; // ✅ Correct placement
 
 const AuthContext = createContext({
   isAuthenticated: false,
@@ -6,15 +7,12 @@ const AuthContext = createContext({
   logout: () => {}
 });
 
-import { ReactNode } from 'react';
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check if a token exists in localStorage
     const token = localStorage.getItem('authToken');
-    setIsAuthenticated(!!token); // Set true if a token exists
+    setIsAuthenticated(!!token);
   }, []);
 
   const login = (token: string) => {

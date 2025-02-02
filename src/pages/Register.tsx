@@ -72,10 +72,11 @@ const Register = () => {
       return;
     }
 
+
     try {
       console.log("formdata", formData);
       const response = await axios.post(
-        "https://paas-backend-1idw.onrender.com/auth/signup",
+        `${process.env.REACT_APP_BACK_END_URL}/auth/signup`,
         {
           name: formData.name,
           email: formData.email,
@@ -174,7 +175,7 @@ const Register = () => {
         <div className="mt-6">
           {/* Google Login */}
           <a
-            href="https://paas-backend-1idw.onrender.com/oauth/google"
+            href=    {`${process.env.REACT_APP_BACK_END_URL}/oauth/google`}
             className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300"
           >
             <img
@@ -187,7 +188,7 @@ const Register = () => {
 
           {/* GitHub Login */}
           <a
-            href="https://paas-backend-1idw.onrender.com/oauth/github"
+            href=    {`${process.env.REACT_APP_BACK_END_URL}/oauth/github`}
             className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300"
           >
             <img
