@@ -4,11 +4,11 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Layout from "./pages/LayoutChange";
+import Layout from "./pages/layout";
 import Home from "./pages/home";
-import Register from "./pages/RegisterChange";
-import Login from "./pages/LoginChange";
-import LoginSuccess from "./pages/LoginSuccessChange";
+import Register from "./pages/register";
+import Login from "./pages/login";
+import LoginSuccess from "./pages/loginSuccess";
 import Dashboard from "./pages/dashboard"; // Import the Dashboard page
 import ProtectedRoute from "./routes/protected.routes";
 import PublicRoute from "./routes/public.routes";
