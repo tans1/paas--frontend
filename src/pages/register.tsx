@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TextInput from "../components/TextInput";
-import axios from "axios"; // Import Axios
+import axios from "axios"; 
 
 const Register = () => {
   const navigate = useNavigate();
