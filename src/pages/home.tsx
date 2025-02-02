@@ -8,7 +8,6 @@ function Home(){
 
     return (
         <div className="bg-gradient-to-tr from-indigo-100 to-white">
-            <Navbar />
             <Intro />
             <Pricing />
             <Info />

@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TextInput from "../components/TextInput"; // Adjust the path as needed
+import { useAuth } from "../hooks/auth.hook";
+
 
 const Login = () => {
+  
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -54,22 +58,20 @@ const Login = () => {
       return;
     }
 
-    // If no validation errors, proceed to login
     setIsLoading(true);
     setLoginError(""); // Clear any previous error
 
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await axios.post(`${process.env.REACT_APP_BACK_END_URL}/auth/login`, {
         email: formData.email,
         password: formData.password,
       });
 
       if (response.status === 200) {
         // Assuming the backend returns a token or user info
-        localStorage.setItem("token", response.data.token);
-
-        // Redirect to the Home page or protected route
-        navigate("/");
+        // localStorage.setItem("authToken", response.data.access_token);
+        login(response.data.access_token); // ✅ Update Auth Context
+        navigate("/register");
       }
     } catch (error: any) {
       setLoginError(error.response?.data?.message || "Login failed, please try again.");
