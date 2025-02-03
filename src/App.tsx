@@ -8,10 +8,10 @@ import Layout from "./pages/layout";
 import Home from "./pages/home";
 import Register from "./pages/register";
 import Login from "./pages/login";
-import LoginSuccess from "./pages/loginSuccess";
-import Dashboard from "./pages/dashboard"; // Import the Dashboard page
+import LoginSuccess from "./pages/login-success";
 import ProtectedRoute from "./routes/protected.routes";
 import PublicRoute from "./routes/public.routes";
+import Dashboard from "./components/Dashboard";
 
 const App = () => {
   return (
