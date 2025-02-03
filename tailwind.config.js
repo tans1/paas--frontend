@@ -1,9 +1,14 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./src/**/*.{html,js,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        reactLogo: 'url(/public/logo192.png)',
+        migrateImage: 'url(/src/assets/migrate.jpg)',
+      },
+    },
   },
   plugins: [],
 }
+
