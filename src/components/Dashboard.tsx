@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-=          <Card title="Deployment Status">
+          <Card title="Deployment Status">
             <div className="flex items-center space-x-2">
               <span className="h-2 w-2 rounded-full bg-green-500"></span>
               <span className="text-green-600">Deployed Successfully</span>
