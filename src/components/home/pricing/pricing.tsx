@@ -20,7 +20,7 @@ const Pricing = () => {
             {/* boxes showing prices right side, can be on the right or below using grid*/}
             <div className='grid sm:grid-cols-3  gap-4 max-w-lg mx-auto'>
                 <div className='shadow sm:text-sm rounded-2xl hover:shadow-sky-600 justify-items-center p-10 text-center text-nowrap'>
-                    <p className='font-bold'>PERSONAL</p>
+                    <p className='font-bold'>BASIC</p>
                     <p className='font-light'>As low as</p>
                     <p className='text-blue-600 text-5xl font-semibold'>1000<span className='text-sm font-bold '>birr</span></p>
                     <p className='font-light'>Per Month</p>
