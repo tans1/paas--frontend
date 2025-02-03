@@ -6,8 +6,7 @@ const LoginSuccess = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('authToken');
-    console.log(token,'token');
+    const token = params.get('token');
     if (token) {
       // Store token in localStorage or a secure cookie
       localStorage.setItem('authToken', token);
