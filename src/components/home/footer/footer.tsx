@@ -13,7 +13,7 @@ const Footer = () => {
       </div>
       <div><span className='font-medium text-xl pb-1'>Company Info</span>
         <ul>
-          <li><a href='/#'>Anout</a></li>
+          <li><a href='/#'>About</a></li>
           <li><a href='/#'>Blog</a></li>
           <li><a href='/#'>Legal Information</a></li>
           <li><a href='/#'>Privacy Policy</a></li>
