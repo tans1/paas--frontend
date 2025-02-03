@@ -8,7 +8,6 @@ function Home(){
     window.scrollTo(0, 0);
     return (
         <div className="bg-gradient-to-tr from-indigo-100 to-white">
-            <Navbar />
             <Intro />
             <Pricing />
             <Info />

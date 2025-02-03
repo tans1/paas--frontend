@@ -7,8 +7,7 @@ const Domain = () => {
     window.scrollTo(0, 0);
     return (
         <div className="bg-gradient-to-tr from-indigo-100 to-white min-h-dvh">
-            <Navbar />
-            <div className='text-3xl md:text-5xl text-center my-20'>
+            <div className='text-3xl md:text-5xl text-center py-20'>
                 <Topic orangeTitle='Personalized Domain Name' title={''} text={'Getting your own unique domain has never been this easy'} />
             </div>
             <div className='mx-auto p-14 bg-transparent rounded-2xl max-w-2xl text-center'>

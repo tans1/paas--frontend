@@ -6,9 +6,8 @@ const PricingPage = () => {
     window.scrollTo(0, 0);
     return (
         <div className="bg-gradient-to-tr from-indigo-100 to-white min-h-dvh">
-            <Navbar />
 
-            <div className="overflow-x-auto justify-items-center my-20">
+            <div className="overflow-x-auto justify-items-center py-20">
                 <table className="max-w-lg text-sm text-left shadow-lg">
                     <thead className="text-xs uppercase">
                         <tr>

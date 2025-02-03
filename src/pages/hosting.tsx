@@ -7,9 +7,8 @@ const Hosting = () => {
     window.scrollTo(0, 0);
     return (
         <div className="bg-gradient-to-tr from-indigo-100 to-white min-h-dvh">
-            <Navbar />
             
-            <div className='text-center my-10'>
+            <div className='text-center py-10'>
                 <Topic title={'Reliable and Secure Hosting'} text={'Our hosting service provides a robust foundation for your website, ensuring:'}
                     action={
                         <ul className='mt-1 mb-10'>

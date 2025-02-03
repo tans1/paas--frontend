@@ -6,7 +6,6 @@ const Contacts = () => {
     window.scrollTo(0, 0);
     return (
         <div className="bg-gradient-to-tr from-indigo-100 to-white min-h-dvh">
-            <Navbar />
             <section className="py-16">
                 <div className="container mx-auto px-4">
                     <h1 className="text-3xl font-bold mb-8 text-center">Contact Us</h1>
