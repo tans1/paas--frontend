@@ -44,6 +44,10 @@ const Navbar = () => {
               </NavLink>
             ))}
             {/* Mobile Auth Links */}
+            {isAuthenticated ? (<NavLink key={'/dashboard'} to={'/dashboard'} className={({ isActive }) => isActive ? "text-blue-900" : ""}>
+                {'dashboard'}
+              </NavLink>) : null
+            }
             {isAuthenticated ? (
               <button onClick={handleLogout} className="text-red-500">Logout</button>
             ) : (
@@ -67,6 +71,11 @@ const Navbar = () => {
               {link.label}
             </NavLink>
           ))}
+
+          {isAuthenticated ? (<NavLink key={'/dashboard'} to={'/dashboard'} className={({ isActive }) => isActive ? "text-blue-900" : ""}>
+                {'Dashboard'}
+              </NavLink>) : null
+            }
 
           {/* Desktop Auth Links */}
           {isAuthenticated ? (
