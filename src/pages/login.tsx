@@ -68,9 +68,7 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-        // Assuming the backend returns a token or user info
-        // localStorage.setItem("authToken", response.data.access_token);
-        login(response.data.access_token); // ✅ Update Auth Context
+        login(response.data.jwt_token); 
         navigate("/register");
       }
     } catch (error: any) {

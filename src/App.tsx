@@ -27,9 +27,7 @@ const App = () => {
           <Route
             index
             element={
-              <PublicRoute>
                 <Home />
-              </PublicRoute>
             }
           />
 
@@ -37,63 +35,56 @@ const App = () => {
           <Route
             path="login"
             element={
-              <PublicRoute>
+              
                 <Login />
-              </PublicRoute>
             }
           />
           <Route
             path="login-success"
             element={
-              <PublicRoute>
+              
                 <LoginSuccess />
-              </PublicRoute>
             }
           />
           <Route
             path="register"
             element={
-              <PublicRoute>
+              
                 <Register />
-              </PublicRoute>
             }
           />
            <Route
             path="domain"
             element={
-              <PublicRoute>
+              
                  <Domain />
-              </PublicRoute>
             }
           />
            <Route
             path="hosting"
             element={
-              <PublicRoute>
+              
                  <Hosting />
-              </PublicRoute>
             }
           />
           <Route
             path="pricing"
             element={
-              <PublicRoute>
+              
                  <PricingPage />
-              </PublicRoute>
             }
           />
           <Route
             path="contacts"
             element={
-              <PublicRoute>
+              
                  <Contacts />
-              </PublicRoute>
             }
           />
 
           {/* Protected Route for Dashboard */}
           <Route
-            path="/dashboard"
+            path="/dashboard/*"
             element={
               <ProtectedRoute>
                 <Dashboard />
