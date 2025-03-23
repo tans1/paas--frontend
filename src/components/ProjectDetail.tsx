@@ -46,14 +46,14 @@ export default function ProjectDetailPage() {
               </a>
             )}
 
-            {currentProject.deployedIp && currentProject.deployedPort && (
+            {currentProject.deployedUrl && (
               <a
-                href={`http://${currentProject.deployedIp}:${currentProject.deployedPort}`}
+                href={`http://${currentProject.deployedUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-indigo-600 hover:underline"
               >
-                Deployment: {currentProject.deployedIp}:{currentProject.deployedPort}
+              {currentProject.deployedUrl}
               </a>
             )}
           </div>

@@ -37,10 +37,11 @@ interface Project {
   createdAt: string;
   deployedIp?: string;
   deployedPort?: number;
+  deployedUrl?: string;
   deployments?: Deployment[];
 }
 
-// Updated Dashboard state interface to include projects
+// Updated Dashboard state interface to include projects and fetchProject
 interface DashboardState {
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -54,11 +55,18 @@ interface DashboardState {
   
   fetchRepositories: (githubUsername: string) => Promise<void>;
   
-  // New properties for projects
+  // Properties for projects
   projects: Project[];
   fetchProjects: () => Promise<void>;
+  
+  // currentProject is used elsewhere (e.g., when a user clicks on a project)
+  currentProject: Project | null;
   setCurrentProject: (project: Project) => void;
-  currentProject : Project | null;
+  
+  // New function to fetch a single project and its corresponding state
+  fetchProject: (projectId: number) => Promise<void>;
+  fetchedProject: Project | null;
+  
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
   
@@ -104,10 +112,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     }
   },
 
-  // New action to fetch projects via the backend endpoint
+  // Projects related state and actions
   projects: [],
-  currentProject: null,
-  setCurrentProject: (project) => set({ currentProject: project }),
   fetchProjects: async () => {
     set({ loading: true, error: null });
     try {
@@ -128,14 +134,45 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     }
   },
 
+  // currentProject is used elsewhere (e.g., when a user clicks on a project)
+  currentProject: null,
+  setCurrentProject: (project) => set({ currentProject: project }),
+
+  // New function to fetch a single project
+  fetchedProject: null,
+  fetchProject: async (projectId: number) => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem("authToken");
+      const { data } = await axios.get<Project>(
+        // http://localhost:3000/projects/my-project?repoId=32
+        `${process.env.REACT_APP_BACK_END_URL}/projects/my-project/?repoId=${projectId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      set({ fetchedProject: data });
+    } catch (error: any) {
+      set({ error: error.message });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   modalOpen: false,
   setModalOpen: (open) => set({ modalOpen: open }),
 
   socket: null,
   createWebSocketConnection: async (repositoryId: number) => {
+    const token = localStorage.getItem("authToken");
     const socket = io(process.env.REACT_APP_BACK_END_URL, {
-      query: { repositoryId }, // Send repositoryId in query params
+      query: { repositoryId },
       transports: ["websocket"],
+      extraHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     set({ socket });
   },
@@ -144,11 +181,20 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     const selectedRepo = get().selectedRepo;
     if (!selectedRepo) return;
     try {
-      await axios.post(`${process.env.REACT_APP_BACK_END_URL}/repositories/deploy`, {
-        owner,
-        repo,
-        githubUsername,
-      });
+      const token = localStorage.getItem("authToken");
+      await axios.post(
+        `${process.env.REACT_APP_BACK_END_URL}/repositories/deploy`,
+        {
+          owner,
+          repo,
+          githubUsername,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error: any) {
       console.error(error.message);
     }

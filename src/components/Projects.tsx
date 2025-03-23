@@ -40,12 +40,13 @@ export default function ProjectsPage() {
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="flex flex-col justify-between rounded-lg border border-gray-200 bg-white p-4 shadow hover:shadow-lg"
+              className="flex flex-col justify-between rounded-lg border border-gray-200 bg-white p-4 shadow hover:shadow-lg  cursor-pointer"
               onClick={() => {
                 setCurrentProject(project);
                 navigate('ProjectDetailPage'); 
 
               }}
+
             >
               <div>
                 <h3 className="mb-1 text-lg font-semibold text-gray-900">
@@ -64,9 +65,9 @@ export default function ProjectsPage() {
                 </a>
               )}
 
-              {project.deployedIp && project.deployedPort && (
+              {project.deployedUrl && (
                 <a
-                  href={`http://${project.deployedIp}:${project.deployedPort}`}
+                  href={`${project.deployedUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-1 inline-block w-fit text-sm text-indigo-500 hover:underline"
