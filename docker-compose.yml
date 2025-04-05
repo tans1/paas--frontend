@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  front-end-app:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+  
+  
