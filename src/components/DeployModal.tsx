@@ -10,6 +10,9 @@ const DeployPage: React.FC = () => {
     deploy,
     createWebSocketConnection,
     socket,
+    fetchProject,
+    fetchedProject,
+    setCurrentProject
   } = useDashboardStore();
   const navigate = useNavigate();
 
@@ -19,6 +22,7 @@ const DeployPage: React.FC = () => {
 
   const frameworks = ["Angular", "React", "Vue.js", "NestJS", "Express"];
 
+  
   useEffect(() => {
     if (!selectedRepo) {
       navigate("/dashboard"); // Redirect if no repository is selected
@@ -28,6 +32,11 @@ const DeployPage: React.FC = () => {
       createWebSocketConnection(selectedRepo.id || 0);
     }
 
+    if (selectedRepo && selectedRepo.id) {
+      fetchProject(selectedRepo.id);
+    }
+
+  
     if (socket) {
       const handleLog = (data: string) => {
         setLogs((prevLogs) => [...prevLogs, data]);
@@ -85,10 +94,38 @@ const DeployPage: React.FC = () => {
         <p className="text-gray-600">Nahom's Projects (Hobby)</p>
       </div>
 
-      <div className="mt-4 flex space-x-2">
-        <button className="bg-gray-300 px-4 py-2 rounded" onClick={() => navigate("/dashboard")}>Back</button>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleDeploy}>Deploy</button>
-      </div>
+      <div className="mt-4 flex space-x-2"> 
+  <button
+    className="bg-gray-300 px-4 py-2 rounded"
+    onClick={() => navigate("/dashboard")}
+  >
+    Back
+  </button>
+  {fetchedProject ? (
+  <div
+    onClick={
+      () => {
+      setCurrentProject(fetchedProject!);
+      navigate('/dashboard/ProjectsPage/ProjectDetailPage'); 
+      }
+    }
+    className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer text-center"
+  >
+    Go to deployment
+  </div>
+) : (
+  <button
+    className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer text-center"
+    onClick={handleDeploy}
+  >
+    Deploy
+  </button>
+)}
+
+
+
+</div>
+
 
       {logs.length > 0 && (
         <div className="mt-4 bg-gray-100 p-2 rounded max-h-40 overflow-y-auto">

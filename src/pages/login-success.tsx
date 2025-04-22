@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useUserStore} from '../store/userStore';
 
+// TODO: Handle token expiration
+// TODO: Update file name
 const LoginSuccess = () => {
   const navigate = useNavigate();
   const {setGithubUsername} = useUserStore();

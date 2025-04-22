@@ -17,6 +17,7 @@ import Hosting from "./pages/hosting";
 import PricingPage from "./pages/pricing";
 import Contacts from "./pages/contacts";
 
+// TODO: Move out the routing to a different file
 const App = () => {
   return (
     <Router>
