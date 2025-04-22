@@ -11,7 +11,7 @@ import Login from "./pages/login";
 import LoginSuccess from "./pages/login-success";
 import ProtectedRoute from "./routes/protected.routes";
 import PublicRoute from "./routes/public.routes";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/templates/dashboard";
 import Domain from "./pages/domain";
 import Hosting from "./pages/hosting";
 import PricingPage from "./pages/pricing";
@@ -25,63 +25,16 @@ const App = () => {
         {/* Layout Wrapper */}
         <Route path="/" element={<Layout />}>
           {/* Home is a public route */}
-          <Route
-            index
-            element={
-                <Home />
-            }
-          />
+          <Route index element={<Home />} />
 
           {/* Public Routes */}
-          <Route
-            path="login"
-            element={
-              
-                <Login />
-            }
-          />
-          <Route
-            path="login-success"
-            element={
-              
-                <LoginSuccess />
-            }
-          />
-          <Route
-            path="register"
-            element={
-              
-                <Register />
-            }
-          />
-           <Route
-            path="domain"
-            element={
-              
-                 <Domain />
-            }
-          />
-           <Route
-            path="hosting"
-            element={
-              
-                 <Hosting />
-            }
-          />
-          <Route
-            path="pricing"
-            element={
-              
-                 <PricingPage />
-            }
-          />
-          <Route
-            path="contacts"
-            element={
-              
-                 <Contacts />
-            }
-          />
+          <Route path="login" element={<Login />} />
+          <Route path="login-success" element={<LoginSuccess />} />
+          <Route path="register" element={<Register />} />
+          <Route path="domain" element={<Domain />} />
+          <Route path="hosting" element={<Hosting />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="contacts" element={<Contacts />} />
 
           {/* Protected Route for Dashboard */}
           <Route

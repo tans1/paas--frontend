@@ -2,7 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+:root {
+  --sidebar-bg-color: #212b36;
+  --sidebar-inactive-tab-text-color: #919EAB;
+  --sidebar-active-tab-text-color: #fff;
+}
+
+/* body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -14,4 +20,4 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
+} */
