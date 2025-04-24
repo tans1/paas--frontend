@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TextInput from "../components/TextInput";
-import axios from "axios"; 
+import TextInput from "../components/atoms/textInput";
+import axios from "axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -26,7 +26,8 @@ const Register = () => {
     if (name === "name") {
       const nameRegex = /^[A-Za-z]{2,}$/;
       if (!nameRegex.test(value)) {
-        error = "Name must be at least 2 characters long and contain only letters.";
+        error =
+          "Name must be at least 2 characters long and contain only letters.";
       }
     } else if (name === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,11 +73,10 @@ const Register = () => {
       return;
     }
 
-
     try {
       console.log("formdata", formData);
       const response = await axios.post(
-        `${process.env.REACT_APP_BACK_END_URL}/auth/signup`,
+        `${import.meta.env.VITE_BACK_END_URL}/auth/signup`,
         {
           name: formData.name,
           email: formData.email,
@@ -158,15 +158,21 @@ const Register = () => {
               className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
             />
             <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-              I agree to the <a href="#" className="text-indigo-600">Terms and Conditions</a>
+              I agree to the{" "}
+              <a href="#" className="text-indigo-600">
+                Terms and Conditions
+              </a>
             </label>
           </div>
 
           <button
             type="submit"
-            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid ? "bg-black hover:bg-gray-800" : "bg-gray-400 cursor-not-allowed"}`}
-            disabled={!isFormValid}
-          >
+            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${
+              isFormValid
+                ? "bg-black hover:bg-gray-800"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+            disabled={!isFormValid}>
             Register Now
           </button>
         </form>
@@ -175,9 +181,8 @@ const Register = () => {
         <div className="mt-6">
           {/* Google Login */}
           <a
-            href=    {`${process.env.REACT_APP_BACK_END_URL}/oauth/google`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300"
-          >
+            href={`${import.meta.env.VITE_BACK_END_URL}/oauth/google`}
+            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300">
             <img
               src="https://img.icons8.com/color/24/000000/google-logo.png"
               alt="Google"
@@ -188,9 +193,8 @@ const Register = () => {
 
           {/* GitHub Login */}
           <a
-            href=    {`${process.env.REACT_APP_BACK_END_URL}/oauth/github`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300"
-          >
+            href={`${import.meta.env.VITE_BACK_END_URL}/oauth/github`}
+            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300">
             <img
               src="https://img.icons8.com/ios-glyphs/30/000000/github.png"
               alt="GitHub"
@@ -205,8 +209,7 @@ const Register = () => {
           Already have an account?{" "}
           <span
             onClick={handleRedirectToSignIn}
-            className="text-indigo-600 hover:underline cursor-pointer"
-          >
+            className="text-indigo-600 hover:underline cursor-pointer">
             Sign in
           </span>
         </p>

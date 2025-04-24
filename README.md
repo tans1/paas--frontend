@@ -1,91 +1,54 @@
+# React + TypeScript + Vite
 
-# Frontend Project
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Project Setup
+Currently, two official plugins are available:
 
-```bash
-$ npm install
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-## Compile and Run the Project
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```bash
-# development
-$ npm run start
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
 ```
-
-
-## Run Tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Contribution Guidelines
-
-### 1. Clone the Repository
-Clone the repository to your local machine:
-```bash
-git clone https://github.com/your-team/repository-name.git
-cd repository-name
-```
-
-### 2. Create a New Branch
-Always create a new branch for your changes:
-```bash
-git checkout -b feature/your-branch-name
-```
-Use a descriptive branch name that reflects the task or feature, e.g., `feature/login-page` or `bugfix/fix-login-error`.
-
-### 3. Make Your Changes
-Implement your changes in the appropriate files. Ensure your work aligns with the project's coding standards and conventions.
-
-### 4. Commit Your Changes
-Stage and commit your changes with a clear and descriptive commit message:
-```bash
-git add .
-git commit -m "Descriptive message about your changes"
-```
-
-### 5. Sync With the Main Branch
-Before pushing your branch, ensure it's up to date with the latest changes from the main branch:
-```bash
-git fetch origin
-git checkout main
-git pull origin main
-git checkout feature/your-branch-name
-git merge main
-```
-Resolve any merge conflicts, if necessary.
-
-### 6. Push Your Changes
-Push your branch to the remote repository:
-```bash
-git push origin feature/your-branch-name
-```
-
-### 7. Create a Pull Request (PR)
-1. Go to the repository on GitHub.
-2. Navigate to the **Pull Requests** tab and click the **New Pull Request** button.
-3. Select your branch as the source branch and `main` as the target branch.
-4. Add a clear and concise title and description for your PR, explaining what you’ve changed and why.
-
-### 8. Assign a Reviewer and Notify Them
-1. Assign a reviewer to your PR using GitHub's **Assignees** feature.
-2. Notify the reviewer via Telegram.
-
-### 9. Respond to Feedback
-Address any feedback provided by the reviewer promptly. Once all changes are approved, the reviewer will merge the PR into the main branch.

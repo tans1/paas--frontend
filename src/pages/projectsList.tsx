@@ -1,9 +1,16 @@
 import PagesTitle from "../components/atoms/pagesTitle";
 import ProjectCard from "../components/molecules/projectCard";
+import { useNavigate } from "react-router-dom";
 
 export default function ProjectsList() {
+  const navigate = useNavigate();
+
+  const handleAddProject = () => {
+    navigate("/dashboard/project/add");
+  };
+
   return (
-    <div>
+    <div className="mt-10 pl-10 pr-40">
       <PagesTitle title="All Projects" subtitle="Dashboard" />
 
       <div className="flex items-center justify-between bg-white rounded-md mt-10 mb-10">
@@ -16,7 +23,9 @@ export default function ProjectsList() {
           />
         </div>
 
-        <button className="ml-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
+        <button
+          className="ml-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition cursor-pointer"
+          onClick={handleAddProject}>
           + Add Project
         </button>
       </div>

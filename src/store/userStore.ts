@@ -15,7 +15,7 @@ interface UserState {
   login: (token: string) => Promise<void>;
   logout: () => void;
   fetchUserProfile: () => Promise<void>;
-  setGithubUsername: (username: string) => void; // ✅ New method
+  setGithubUsername: (username: string) => void; 
 }
 
 export const useUserStore = create<UserState>()(
@@ -27,7 +27,7 @@ export const useUserStore = create<UserState>()(
       login: async (token: string) => {
         localStorage.setItem("authToken", token);
         set({ isAuthenticated: true });
-        await get().fetchUserProfile(); // Fetch user info after login
+        await get().fetchUserProfile(); 
       },
 
       logout: () => {
@@ -48,7 +48,7 @@ export const useUserStore = create<UserState>()(
           set({ user: data });
         } catch (error) {
           console.error("Failed to fetch user profile:", error);
-          get().logout(); // Logout if token is invalid
+          get().logout(); 
         }
       },
 
@@ -58,6 +58,6 @@ export const useUserStore = create<UserState>()(
         }));
       },
     }),
-    { name: "user-storage" } // Stores in localStorage
+    { name: "user-storage" } 
   )
 );
