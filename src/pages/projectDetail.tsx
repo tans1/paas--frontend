@@ -12,21 +12,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 export default function ProjectDetail() {
-  const [preview, setPreview] = useState(null);
-  const API_KEY = import.meta.env.VITE_LINK_PREVIEW_API_KEY;
+  // const [preview, setPreview] = useState(null);
+  // const API_KEY = import.meta.env.VITE_LINK_PREVIEW_API_KEY;
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    const url = `https://api.linkpreview.net/?key=${API_KEY}&q=https://github.com`;
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => setPreview(data));
-  }, []);
+  // useEffect(() => {
+  //   const url = `https://api.linkpreview.net/?key=${API_KEY}&q=https://github.com`;
+  //   fetch(url)
+  //     .then((res) => res.json())
+  //     .then((data) => setPreview(data));
+  // }, []);
 
   const handleBuildLogsClick = () => {
     navigate(`/dashboard/project/details/${id}/buildLog`);
@@ -97,7 +97,7 @@ export default function ProjectDetail() {
 
       <div className="mt-5 grid grid-cols-2">
         <div className="border h-96">
-          {preview ? (
+          {/* {preview ? (
             <div className="flex gap-4 w-full h-full">
               <img
                 src={preview.image}
@@ -107,7 +107,7 @@ export default function ProjectDetail() {
             </div>
           ) : (
             <p>Loading preview...</p>
-          )}
+          )} */}
         </div>
         <div className="border p-5">
           <ul>

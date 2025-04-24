@@ -53,7 +53,7 @@ interface DashboardState {
   loading: boolean;
   error: string | null;
   
-  fetchRepositories: (githubUsername: string) => Promise<void>;
+  fetchRepositories: () => Promise<void>;
   
   // Properties for projects
   projects: Project[];
@@ -87,7 +87,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   loading: false,
   error: null,
 
-  fetchRepositories: async (githubUsername: string) => {
+  fetchRepositories: async () => {
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem("authToken");
