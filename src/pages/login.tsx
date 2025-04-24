@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import TextInput from "../components/TextInput"; // Adjust the path as needed
+import TextInput from "../components/atoms/textInput"; // Adjust the path as needed
 import { useAuth } from "../hooks/auth.hook";
 
-
 const Login = () => {
-  
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -62,24 +60,30 @@ const Login = () => {
     setLoginError(""); // Clear any previous error
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACK_END_URL}/auth/login`, {
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACK_END_URL}/auth/login`,
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
 
       if (response.status === 200) {
         login(response.data.access_token); 
         navigate("/dashboard");
       }
     } catch (error: any) {
-      setLoginError(error.response?.data?.message || "Login failed, please try again.");
+      setLoginError(
+        error.response?.data?.message || "Login failed, please try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   // Button enabled/disabled logic
-  const isFormValid = !errors.email && !errors.password && formData.email && formData.password;
+  const isFormValid =
+    !errors.email && !errors.password && formData.email && formData.password;
 
   // Redirect to Register page
   const handleRedirectToRegister = () => {
@@ -119,9 +123,12 @@ const Login = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid ? "bg-black hover:bg-gray-800" : "bg-gray-400 cursor-not-allowed"}`}
-            disabled={!isFormValid || isLoading}
-          >
+            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${
+              isFormValid
+                ? "bg-black hover:bg-gray-800"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+            disabled={!isFormValid || isLoading}>
             {isLoading ? "Signing In..." : "Sign In"}
           </button>
 
@@ -133,7 +140,9 @@ const Login = () => {
                 id="newsletter"
                 className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
               />
-              <label htmlFor="newsletter" className="ml-2 text-sm text-gray-700">
+              <label
+                htmlFor="newsletter"
+                className="ml-2 text-sm text-gray-700">
                 Subscribe me to newsletter
               </label>
             </div>
@@ -147,9 +156,8 @@ const Login = () => {
         <div className="mt-6">
           {/* Google Login */}
           <a
-            href={`${process.env.REACT_APP_BACK_END_URL}/oauth/google`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300"
-          >
+            href={`${import.meta.env.VITE_BACK_END_URL}/oauth/google`}
+            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300">
             <img
               src="https://img.icons8.com/color/24/000000/google-logo.png"
               alt="Google"
@@ -160,9 +168,8 @@ const Login = () => {
 
           {/* GitHub Login */}
           <a
-            href={`${process.env.REACT_APP_BACK_END_URL}/oauth/github`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300"
-          >
+            href={`${import.meta.env.VITE_BACK_END_URL}/oauth/github`}
+            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300">
             <img
               src="https://img.icons8.com/ios-glyphs/30/000000/github.png"
               alt="GitHub"
@@ -177,14 +184,15 @@ const Login = () => {
           Not registered?{" "}
           <span
             onClick={handleRedirectToRegister}
-            className="text-indigo-600 hover:underline cursor-pointer"
-          >
+            className="text-indigo-600 hover:underline cursor-pointer">
             Create account
           </span>
         </p>
 
         {/* Show error message */}
-        {loginError && <p className="text-red-500 text-center mt-4">{loginError}</p>}
+        {loginError && (
+          <p className="text-red-500 text-center mt-4">{loginError}</p>
+        )}
       </div>
     </div>
   );
