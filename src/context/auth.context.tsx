@@ -24,7 +24,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("authToken");
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user-storage');
     setIsAuthenticated(false);
   };
 

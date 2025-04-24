@@ -53,7 +53,7 @@ interface DashboardState {
   loading: boolean;
   error: string | null;
   
-  fetchRepositories: (githubUsername: string) => Promise<void>;
+  fetchRepositories: () => Promise<void>;
   
   // Properties for projects
   projects: Project[];
@@ -87,13 +87,21 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   loading: false,
   error: null,
 
-  fetchRepositories: async (githubUsername: string) => {
+  fetchRepositories: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axios.get<Repo[]>(
-        `https://api.github.com/users/${githubUsername}/repos`
+      const token = localStorage.getItem("authToken");
+      const { data: apiResponse } = await axios.get<{ message: string; data: Repo[] }>(
+        `${process.env.REACT_APP_BACK_END_URL}/repositories/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      const repositories = data.map((repo) => ({
+      
+      const repos = apiResponse.data;
+      const repositories = repos.map((repo) => ({
         id: repo.id,
         name: repo.name,
         description: repo.description || "No description available",
@@ -113,6 +121,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   },
 
   // Projects related state and actions
+  // TODO: add list of branches and default branch to Reo interface
   projects: [],
   fetchProjects: async () => {
     set({ loading: true, error: null });
