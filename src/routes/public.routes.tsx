@@ -1,8 +1,11 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth.hook';
+import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/auth.hook";
 
-const PublicRoute = ({ children }: { children: JSX.Element }) => {
+interface PublicRouteProps {
+  children: ReactNode;
+}
+const PublicRoute = ({ children }: PublicRouteProps) => {
   const { isAuthenticated } = useAuth();
 
   // Always return either a valid JSX element or null
