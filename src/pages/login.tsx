@@ -68,8 +68,8 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-        login(response.data.jwt_token); 
-        navigate("/register");
+        login(response.data.access_token); 
+        navigate("/dashboard");
       }
     } catch (error: any) {
       setLoginError(error.response?.data?.message || "Login failed, please try again.");

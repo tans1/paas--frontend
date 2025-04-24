@@ -27,7 +27,8 @@ export const useUserStore = create<UserState>()(
       login: async (token: string) => {
         localStorage.setItem("authToken", token);
         set({ isAuthenticated: true });
-        await get().fetchUserProfile(); // Fetch user info after login
+        await get().
+        fetchUserProfile();
       },
 
       logout: () => {
