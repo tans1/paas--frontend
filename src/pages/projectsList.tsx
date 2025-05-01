@@ -1,9 +1,18 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PagesTitle from "../components/atoms/pagesTitle";
 import ProjectCard from "../components/molecules/projectCard";
-import { useNavigate } from "react-router-dom";
+import { useDashboardStore } from "../store/dashboardStore";
 
 export default function ProjectsList() {
   const navigate = useNavigate();
+  const { projects } = useDashboardStore();
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredProjects = projects.filter((project) =>
+    project.name.toLowerCase().startsWith(searchTerm.trim().toLowerCase())
+  );
 
   const handleAddProject = () => {
     navigate("/dashboard/project/add");
@@ -20,6 +29,8 @@ export default function ProjectsList() {
             type="text"
             placeholder="Search projects..."
             className="outline-none w-full text-sm text-gray-700"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
@@ -31,11 +42,11 @@ export default function ProjectsList() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 1, 1, 1, 1, 1].map((_, index) => (
+        {filteredProjects.map((project, index) => (
           <ProjectCard
             key={index}
-            title="Project 1"
-            link="https://example.com"
+            title={project.name}
+            link={project.url}
             status="active"
             githubUrl="https://github.com/me"
           />
