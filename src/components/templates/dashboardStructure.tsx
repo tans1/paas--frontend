@@ -9,6 +9,7 @@ import AddProject from "../../pages/addProject";
 import ProjectDetail from "../../pages/projectDetail";
 import BuildLog from "../../pages/buildLog";
 import RunTimeLog from "../../pages/runtimeLog";
+import DeployProject from "../../pages/deployProject";
 
 const DashboardStructure: React.FC = () => {
   // const { activeTab } = useDashboardStore();
@@ -34,6 +35,7 @@ const DashboardStructure: React.FC = () => {
                 path="project/details/:id/runtimeLog"
                 element={<RunTimeLog />}
               />
+              <Route path="deploy" element={<DeployProject />} />
             </Routes>
           </div>
         </div>

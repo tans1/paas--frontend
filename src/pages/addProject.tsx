@@ -2,8 +2,22 @@ import PagesTitle from "../components/atoms/pagesTitle";
 import UserRepositoryListItem from "../components/molecules/userRepositoryListItem";
 
 import { Table, TableBody } from "@/components/ui/table";
+import { useEffect } from "react";
+import { useDashboardStore } from "../store/dashboardStore";
 
 export default function AddProject() {
+  const { fetchRepositories, repositories } = useDashboardStore();
+  useEffect(() => {
+    const fetchAllRepositories = async () => {
+      try {
+        await fetchRepositories();
+      } catch (error) {
+        console.error("Error fetching repositories:", error);
+      }
+    };
+    fetchAllRepositories();
+  }, []);
+
   return (
     <div className="w-full mt-10 pl-10 pr-40">
       <PagesTitle title="Add Project" subtitle="Repositories" />
@@ -21,13 +35,17 @@ export default function AddProject() {
       <div>
         <Table>
           <TableBody>
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
+            {repositories.map((repository, index) => (
               <UserRepositoryListItem
                 key={index}
-                repoName="Repository name"
-                defaultBranch="main"
-                recentCommitMessage="Initial commit"
-                recentCommitDate="2023-10-01"
+                repoName={repository.name}
+                default_branch={repository.default_branch}
+                // recentCommitMessage="Initial commit"
+                language={repository.language}
+                created_at={repository.created_at}
+                description={repository.description}
+                html_url={repository.html_url}
+                branches={repository.branches}
               />
             ))}
           </TableBody>
