@@ -1,11 +1,16 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { GitBranch, GitCommitHorizontal } from "lucide-react";
+import { useNavigate } from "react-router";
+import { useDashboardStore } from "../../store/dashboardStore";
 
 interface Props {
   repoName: string;
   default_branch: string;
   created_at: string;
   language: string;
+  description: string;
+  html_url: string;
+  branches: string[];
 }
 
 export default function UserRepositoryListItem({
@@ -13,9 +18,26 @@ export default function UserRepositoryListItem({
   default_branch,
   created_at,
   language,
+  description,
+  html_url,
+  branches,
 }: Props) {
+  const navigate = useNavigate();
+  const { setToBeDeployedProject } = useDashboardStore();
+  const handleDeployment = () => {
+    setToBeDeployedProject({
+      repoName,
+      default_branch,
+      created_at,
+      language,
+      description,
+      html_url,
+      branches,
+    });
+    navigate("/dashboard/deploy");
+  };
   return (
-    <TableRow className="cursor-pointer">
+    <TableRow className="cursor-pointer" onClick={handleDeployment}>
       <TableCell className="font-bold">{repoName}</TableCell>
       <TableCell>
         <div className="flex flex-col gap-3">

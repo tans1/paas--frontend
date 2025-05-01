@@ -43,6 +43,9 @@ export default function AddProject() {
                 // recentCommitMessage="Initial commit"
                 language={repository.language}
                 created_at={repository.created_at}
+                description={repository.description}
+                html_url={repository.html_url}
+                branches={repository.branches}
               />
             ))}
           </TableBody>
