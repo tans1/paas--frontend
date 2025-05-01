@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import TextInput from "../components/atoms/textInput"; // Adjust the path as needed
+import TextInput from "../components/atoms/textInput";
 import { useAuth } from "../hooks/auth.hook";
 
 const Login = () => {
@@ -14,10 +14,9 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
-  const [loginError, setLoginError] = useState(""); // For backend login errors
-  const [isLoading, setIsLoading] = useState(false); // For loading state
+  const [loginError, setLoginError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Field validation function
   const validateField = (name: string, value: string) => {
     let error = "";
     if (name === "email") {
@@ -35,7 +34,6 @@ const Login = () => {
     return error;
   };
 
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -44,7 +42,6 @@ const Login = () => {
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  // Handle form submission
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -57,7 +54,7 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    setLoginError(""); // Clear any previous error
+    setLoginError("");
 
     try {
       const response = await axios.post(
@@ -81,11 +78,9 @@ const Login = () => {
     }
   };
 
-  // Button enabled/disabled logic
   const isFormValid =
     !errors.email && !errors.password && formData.email && formData.password;
 
-  // Redirect to Register page
   const handleRedirectToRegister = () => {
     navigate("/register");
   };
@@ -120,7 +115,6 @@ const Login = () => {
             name="password"
           />
 
-          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${
@@ -132,7 +126,6 @@ const Login = () => {
             {isLoading ? "Signing In..." : "Sign In"}
           </button>
 
-          {/* Newsletter & Forgot Password */}
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center">
               <input
@@ -152,9 +145,7 @@ const Login = () => {
           </div>
         </form>
 
-        {/* Social Login Buttons */}
         <div className="mt-6">
-          {/* Google Login */}
           <a
             href={`${import.meta.env.VITE_BACK_END_URL}/oauth/google`}
             className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300">
@@ -166,7 +157,6 @@ const Login = () => {
             Sign in with Google
           </a>
 
-          {/* GitHub Login */}
           <a
             href={`${import.meta.env.VITE_BACK_END_URL}/oauth/github`}
             className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300">
@@ -179,7 +169,6 @@ const Login = () => {
           </a>
         </div>
 
-        {/* Create Account Link */}
         <p className="mt-6 text-center text-gray-600">
           Not registered?{" "}
           <span
@@ -189,7 +178,6 @@ const Login = () => {
           </span>
         </p>
 
-        {/* Show error message */}
         {loginError && (
           <p className="text-red-500 text-center mt-4">{loginError}</p>
         )}

@@ -3,16 +3,16 @@ import { GitBranch, GitCommitHorizontal } from "lucide-react";
 
 interface Props {
   repoName: string;
-  defaultBranch: string;
-  recentCommitMessage: string;
-  recentCommitDate: string;
+  default_branch: string;
+  created_at: string;
+  language: string;
 }
 
 export default function UserRepositoryListItem({
   repoName,
-  defaultBranch,
-  recentCommitMessage,
-  recentCommitDate,
+  default_branch,
+  created_at,
+  language,
 }: Props) {
   return (
     <TableRow className="cursor-pointer">
@@ -23,7 +23,7 @@ export default function UserRepositoryListItem({
             <span>
               <GitBranch className="w-4 mr-1" />
             </span>
-            {defaultBranch}
+            {default_branch}
           </p>
 
           {/* <p className="text-sm flex items-center">
@@ -35,16 +35,23 @@ export default function UserRepositoryListItem({
         </div>
       </TableCell>
 
+      {/* <TableCell>
+        <span className="flex items-center">
+          <GitCommitHorizontal className="w-4 mr-1" />
+          {default_branch}
+        </span>
+      </TableCell> */}
+
       <TableCell>
         <span className="flex items-center">
           <GitCommitHorizontal className="w-4 mr-1" />
-          {recentCommitMessage}
+          {language}
         </span>
       </TableCell>
 
       <TableCell className="text-end">
-        <span> last commit on </span>
-        {recentCommitDate}
+        <span> created at </span>
+        {created_at}
       </TableCell>
     </TableRow>
   );

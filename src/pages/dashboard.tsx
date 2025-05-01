@@ -2,13 +2,27 @@ import { FolderDot, Cpu } from "lucide-react";
 import ActiveProjectsListItem from "../components/molecules/activeProjectsListItem";
 import { Table, TableBody } from "@/components/ui/table";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { useDashboardStore } from "../store/dashboardStore";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { fetchProjects, projects } = useDashboardStore();
 
   const handleProjectClick = () => {
     navigate("/dashboard/projects");
   };
+
+  useEffect(() => {
+    const fetchAllProjects = async () => {
+      try {
+        await fetchProjects();
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    fetchAllProjects();
+  }, [fetchProjects, projects]);
   return (
     <div className="">
       <div className=" bg-[#0057D9] pt-10  h-52 flex flex-col justify-between gap-10">
@@ -31,7 +45,7 @@ const Dashboard = () => {
                 <FolderDot />
               </div>
             </div>
-            <div className="text-5xl font-semibold">18</div>
+            <div className="text-5xl font-semibold">{projects.length}</div>
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between">
@@ -41,7 +55,7 @@ const Dashboard = () => {
                 <FolderDot className="text-blue-400" />
               </div>
             </div>
-            <div className="text-5xl font-semibold">4</div>
+            <div className="text-5xl font-semibold">{projects.length}</div>
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between">
@@ -63,13 +77,13 @@ const Dashboard = () => {
         </div>
         <Table>
           <TableBody>
-            {[1, 2, 3, 4, 5].map((_, index) => (
+            {projects.map((project, index) => (
               <ActiveProjectsListItem
                 key={index}
                 framework="React"
-                projectName="Project 1"
-                lastDeploymentDate="2023-10-01"
-                deployedUrl="https://example.com"
+                projectName={project.name}
+                lastDeploymentDate={project.createdAt}
+                deployedUrl={project.url}
               />
             ))}
           </TableBody>
