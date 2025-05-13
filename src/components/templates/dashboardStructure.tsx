@@ -3,6 +3,7 @@ import AppSidebar from "../molecules/sidebar";
 import Dashboard from "../../pages/dashboard";
 import ProjectsList from "../../pages/projectsList";
 import Navbar from "../molecules/navbar";
+import Chatbot from "../Chatbot"
 
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AddProject from "../../pages/addProject";
@@ -38,6 +39,7 @@ const DashboardStructure: React.FC = () => {
               <Route path="deploy" element={<DeployProject />} />
             </Routes>
           </div>
+          <Chatbot />
         </div>
       </main>
     </SidebarProvider>
