@@ -27,14 +27,14 @@
 //       navigate("/dashboard"); // Redirect if no repository is selected
 //       return;
 //     }
+    
+//     if (selectedRepo && selectedRepo.id) {
+//         fetchProject(selectedRepo.id);
+//     }
+    
 //     if (!socket) {
 //       createWebSocketConnection(selectedRepo.id || 0);
 //     }
-
-//     if (selectedRepo && selectedRepo.id) {
-//       fetchProject(selectedRepo.id);
-//     }
-
 //     if (socket) {
 //       const handleLog = (data: string) => {
 //         setLogs((prevLogs) => [...prevLogs, data]);

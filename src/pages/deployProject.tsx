@@ -10,17 +10,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronDown, UploadCloud } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router";
+import { useUserStore } from "../store/userStore";
+import deployProject from "../api/deploy";
 
 interface EnvPair {
   key: string;
   value: string;
 }
 
+interface DeployedProject {
+  envVars: EnvPair[];
+  envFile: File | null;
+  owner: string | undefined;
+  repo: string | undefined;
+  githubUsername: string | undefined;
+  branch: string | undefined;
+}
+
 export default function DeployProject() {
   const navigate = useNavigate();
   const { toBeDeployedProject } = useDashboardStore();
+  const { user } = useUserStore();
   const [branch, setBranch] = useState(toBeDeployedProject?.default_branch);
   const [framework, setFramework] = useState("React");
+
   const frameworks = [
     "React",
     "Next.js",
@@ -76,7 +89,27 @@ export default function DeployProject() {
     navigate("/dashboard/add");
   };
 
-  const handleDeploy = async () => {};
+  const handleDeploy = async () => {
+    const project: DeployedProject = {
+      envVars: envVars
+        .filter((p) => p.key.trim() !== "" && p.value.trim() !== "")
+        .map((p) => ({ key: p.key.trim(), value: p.value.trim() })),
+      envFile,
+      branch,
+      repo: toBeDeployedProject?.repoName,
+      owner: user?.githubUsername,
+      githubUsername: user?.githubUsername,
+    };
+    console.log("project to be deploed is...", project);
+    try {
+      const { data } = await deployProject(project);
+      console.log("the returned data after deployment is", data);
+      const newProject = data;
+      navigate(`/dashboard/project/details/${branch}/${newProject.repoId}/logs`);
+    } catch (error) {
+      console.error("Deployment failed:", error);
+    }
+  };
 
   return (
     <div className="w-full mt-10 pl-10 pr-40">

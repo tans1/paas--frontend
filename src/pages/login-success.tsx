@@ -1,36 +1,32 @@
-import  { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {useUserStore} from '../store/userStore';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../store/userStore";
 
 // TODO: Handle token expiration
 // TODO: Update file name
 const LoginSuccess = () => {
   const navigate = useNavigate();
-  const {setGithubUsername} = useUserStore();
+  const { setGithubUsername } = useUserStore();
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const username = params.get('username');
-    const localStorageToken = localStorage.getItem('authToken');
+    const token = params.get("token");
+    const username = params.get("username");
+    // const localStorageToken = localStorage.getItem('authToken');
 
-    
+    console.log("the token is", token);
+    console.log("the username is", username);
 
-    if(username) {
+    if (username) {
       setGithubUsername(username);
     }
-    if (localStorageToken) {
-      navigate('/dashboard'); 
-      return;
-    }
     if (token) {
-      // Store token in localStorage or a secure cookie
-      localStorage.setItem('authToken', token);
-      navigate('/dashboard'); // Redirect to a secure page
-      return
+      localStorage.setItem("authToken", token);
+      navigate("/dashboard"); // Redirect to a secure page
+      return;
     } else {
-      navigate('/login'); // Redirect back to login on failure
+      navigate("/login");
     }
-  }, [navigate]);
+  }, []);
 
   return <div>Logging you in...</div>;
 };

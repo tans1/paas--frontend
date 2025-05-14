@@ -1,10 +1,16 @@
 import { TableCell, TableRow } from "@/components/ui/table";
+import dateFormat from "dateformat";
+import normalizeUrl from "normalize-url";
+import { useNavigate } from "react-router";
 
 interface Props {
   framework: Framework;
   projectName: string;
   lastDeploymentDate: string;
   deployedUrl: string;
+  githublink: string;
+  repoId: number;
+  branch: string;
 }
 type Framework = "Next" | "React" | "Vue" | "Angular";
 
@@ -22,10 +28,26 @@ export default function ActiveProjectsListItem({
   projectName,
   lastDeploymentDate,
   deployedUrl,
+  githublink,
+  repoId,
+  branch,
 }: Props) {
+  const navigate = useNavigate();
+  // const normalizeUrl = (url: string) => {
+  //   if (/^https?:\/\//i.test(url)) {
+  //     return url;
+  //   }
+  //   return "https://" + url;
+  // };
+
+  const handleDetails = () => {
+    navigate(`/dashboard/project/details/${branch}/${repoId}`);
+  };
   return (
     <TableRow className="hover:bg-white">
-      <TableCell className="font-bold flex items-center">
+      <TableCell
+        className="font-bold flex items-center pr-40 hover:cursor-pointer"
+        onClick={handleDetails}>
         <img
           src={frameworksImageMap[framework]}
           alt={framework}
@@ -33,8 +55,28 @@ export default function ActiveProjectsListItem({
         />
         {projectName}
       </TableCell>
-      <TableCell className="text-center">{lastDeploymentDate}</TableCell>
-      <TableCell className="text-end">{deployedUrl}</TableCell>
+      <TableCell
+        className=" pr-40 hover:cursor-pointer"
+        onClick={handleDetails}>
+        {dateFormat(lastDeploymentDate, "dddd, mmmm dS, yyyy, h:MM TT")}
+      </TableCell>
+      <TableCell className="">
+        <a
+          href={normalizeUrl(deployedUrl)}
+          className="text-blue-600"
+          target="_blank">
+          {deployedUrl}
+        </a>
+      </TableCell>
+
+      <TableCell className="">
+        <a
+          href={normalizeUrl(githublink)}
+          className="text-blue-600"
+          target="_blank">
+          {githublink}
+        </a>
+      </TableCell>
     </TableRow>
   );
 }

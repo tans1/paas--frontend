@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PagesTitle from "../components/atoms/pagesTitle";
 import ProjectCard from "../components/molecules/projectCard";
@@ -6,17 +6,27 @@ import { useDashboardStore } from "../store/dashboardStore";
 
 export default function ProjectsList() {
   const navigate = useNavigate();
-  const { projects } = useDashboardStore();
+  const { projects, fetchProjects } = useDashboardStore();
 
   const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredProjects = projects.filter((project) =>
-    project.name.toLowerCase().startsWith(searchTerm.trim().toLowerCase())
-  );
+  const [filteredProjects, setFilteredProjects] = useState<typeof projects>([]);
 
   const handleAddProject = () => {
     navigate("/dashboard/project/add");
   };
+
+  useEffect(() => {
+    if (projects.length === 0) {
+      fetchProjects();
+    }
+  }, [projects.length, fetchProjects]);
+
+  useEffect(() => {
+    const term = searchTerm.trim().toLowerCase();
+    setFilteredProjects(
+      projects.filter((project) => project.name.toLowerCase().startsWith(term))
+    );
+  }, [projects, searchTerm]);
 
   return (
     <div className="mt-10 pl-10 pr-40">
@@ -45,10 +55,12 @@ export default function ProjectsList() {
         {filteredProjects.map((project, index) => (
           <ProjectCard
             key={index}
+            repoId={project.repoId}
             title={project.name}
-            link={project.url}
-            status="active"
-            githubUrl="https://github.com/me"
+            link={project.deployedUrl}
+            branch={project.branch}
+            description={project.description}
+            githubUrl={project.url}
           />
         ))}
       </div>

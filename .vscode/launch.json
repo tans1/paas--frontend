@@ -1,0 +1,23 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Attach to Chrome",
+      "type": "chrome", // use the built-in JS debugger
+      "request": "attach", // attach to an existing browser
+      "port": 9222, // must match your --remote-debugging-port
+      "webRoot": "${workspaceFolder}",
+      "url": "http://localhost:5173" // or wherever your app runs
+    }
+  ]
+}
