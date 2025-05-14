@@ -7,7 +7,7 @@ import Navbar from "../molecules/navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AddProject from "../../pages/addProject";
 import ProjectDetail from "../../pages/projectDetail";
-import BuildLog from "../../pages/buildLog";
+import LogsPage from "../../pages/logs";
 import RunTimeLog from "../../pages/runtimeLog";
 import DeployProject from "../../pages/deployProject";
 
@@ -26,13 +26,16 @@ const DashboardStructure: React.FC = () => {
               <Route path="/" element={<Dashboard />} />
               <Route path="projects" element={<ProjectsList />} />
               <Route path="project/add" element={<AddProject />} />
-              <Route path="project/details/:id" element={<ProjectDetail />} />
               <Route
-                path="project/details/:id/buildLog"
-                element={<BuildLog />}
+                path="project/details/:branch/:repoId"
+                element={<ProjectDetail />}
               />
               <Route
-                path="project/details/:id/runtimeLog"
+                path="project/details/:branch/:repoId/logs/:deploymentId?"
+                element={<LogsPage />}
+              />
+              <Route
+                path="project/details/:repoId/runtimeLog"
                 element={<RunTimeLog />}
               />
               <Route path="deploy" element={<DeployProject />} />

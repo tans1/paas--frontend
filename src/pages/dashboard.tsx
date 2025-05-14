@@ -1,13 +1,22 @@
 import { FolderDot, Cpu } from "lucide-react";
 import ActiveProjectsListItem from "../components/molecules/activeProjectsListItem";
-import { Table, TableBody } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useNavigate } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDashboardStore } from "../store/dashboardStore";
+import Lottie from "lottie-react";
+import loadingAnimation from "../lottie/loadinganimation.json";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { fetchProjects, projects } = useDashboardStore();
+  const { fetchProjects, projects, loading } = useDashboardStore();
+  const [showLoader, setShowLoader] = useState(true);
 
   const handleProjectClick = () => {
     navigate("/dashboard/projects");
@@ -19,10 +28,23 @@ const Dashboard = () => {
         await fetchProjects();
       } catch (error) {
         console.error("Error fetching projects:", error);
+      } finally {
+        setTimeout(() => setShowLoader(false), 2000);
       }
     };
     fetchAllProjects();
-  }, [fetchProjects, projects]);
+  }, []);
+
+  if (loading || showLoader) {
+    return (
+      <div className="w-full h-[90vh] flex justify-center items-center ">
+        <div className="w-[10%] h-full m-auto flex flex-col justify-center">
+          <Lottie animationData={loadingAnimation} loop={true} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="">
       <div className=" bg-[#0057D9] pt-10  h-52 flex flex-col justify-between gap-10">
@@ -73,17 +95,27 @@ const Dashboard = () => {
       <div className="mt-30 px-10">
         <div className="flex justify-between bg-white shadow-sm rounded py-5 px-5 mb-5">
           <div className="font-semibold">Active Projects</div>
-          {/* <div className="text-blue-400 cursor-pointer">View All Projects</div> */}
         </div>
-        <Table>
+        <Table className="">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="">Name</TableHead>
+              <TableHead className="">Deployed at</TableHead>
+              <TableHead className="">Link</TableHead>
+              <TableHead className="">Github</TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>
-            {projects.map((project, index) => (
+            {projects.slice(0, 5).map((project, index) => (
               <ActiveProjectsListItem
                 key={index}
                 framework="React"
                 projectName={project.name}
                 lastDeploymentDate={project.createdAt}
-                deployedUrl={project.url}
+                deployedUrl={project.deployedUrl}
+                githublink={project.url}
+                repoId={project.repoId}
+                branch={project.branch}
               />
             ))}
           </TableBody>

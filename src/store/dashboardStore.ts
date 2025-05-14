@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api/axios";
 import { io, Socket } from "socket.io-client";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -17,17 +17,28 @@ interface Repo {
   // lastUpdated?: string;
 }
 
+interface Log {
+  id: number;
+  message: string;
+  deploymentId: number;
+}
+
 // New interfaces for projects and deployments based on your schema
+interface EnvVar {
+  key: string;
+  value: string;
+}
+
 interface Deployment {
   id: number;
   projectId: number;
   status: string;
   branch: string;
-  environmentVariables?: any;
+  environmentVariables?: EnvVar[];
   rollbackToId?: number;
   rollbackedDeployments?: Deployment[];
   createdAt: string;
-  logs?: any[];
+  logs?: Log[];
 }
 
 interface Project {
@@ -35,6 +46,8 @@ interface Project {
   repoId: number;
   name: string;
   url: string;
+  description: string;
+  branch: string;
   linkedByUserId: number;
   createdAt: string;
   deployedIp?: string;
@@ -44,6 +57,7 @@ interface Project {
 }
 
 interface ProjectToBeDeployed {
+  id: number;
   repoName: string;
   default_branch: string;
   created_at: string;
@@ -53,7 +67,6 @@ interface ProjectToBeDeployed {
   branches: string[];
 }
 
-// Updated Dashboard state interface to include projects and fetchProject
 interface DashboardState {
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -76,7 +89,7 @@ interface DashboardState {
   setCurrentProject: (project: Project) => void;
 
   // New function to fetch a single project and its corresponding state
-  fetchProject: (projectId: number) => Promise<void>;
+  fetchProject: (branch: string, projectId: number) => Promise<void>;
   fetchedProject: Project | null;
 
   modalOpen: boolean;
@@ -111,15 +124,8 @@ export const useDashboardStore = create<DashboardState>()(
       fetchRepositories: async () => {
         set({ loading: true, error: null });
         try {
-          const token = localStorage.getItem("authToken");
-
-          const { data } = await axios.get<{ data: Repo[] }>(
-            `${import.meta.env.VITE_BACK_END_URL}/repositories/user`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
+          const { data } = await api.get<{ data: Repo[] }>(
+            "/repositories/user"
           );
           const repositories = data.data.map((repo) => ({
             id: repo.id,
@@ -131,7 +137,6 @@ export const useDashboardStore = create<DashboardState>()(
             forks_count: repo.forks_count,
             created_at: repo.created_at,
             branches: repo.branches,
-            // lastUpdated: new Date(repo.updated_at).toLocaleDateString(),
           }));
           set({ repositories });
         } catch (error: any) {
@@ -148,15 +153,7 @@ export const useDashboardStore = create<DashboardState>()(
       fetchProjects: async () => {
         set({ loading: true, error: null });
         try {
-          const token = localStorage.getItem("authToken");
-          const { data } = await axios.get<Project[]>(
-            `${import.meta.env.VITE_BACK_END_URL}/projects/my-projects`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const { data } = await api.get<Project[]>("/projects/my-projects");
           set({ projects: data });
         } catch (error: any) {
           set({ error: error.message });
@@ -165,27 +162,17 @@ export const useDashboardStore = create<DashboardState>()(
         }
       },
 
-      // currentProject is used elsewhere (e.g., when a user clicks on a project)
       currentProject: null,
       setCurrentProject: (project) => set({ currentProject: project }),
 
-      // New function to fetch a single project
       fetchedProject: null,
-      fetchProject: async (projectId: number) => {
+      fetchProject: async (branch: string, repoId: number) => {
         set({ loading: true, error: null });
+
         try {
-          const token = localStorage.getItem("authToken");
-          const { data } = await axios.get<Project>(
-            // http://localhost:3000/projects/my-project?repoId=32
-            `${
-              import.meta.env.VITE_BACK_END_URL
-            }/projects/my-project/?repoId=${projectId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const { data } = await api.get<Project>("/projects/my-project", {
+            params: { repoId: repoId, branch },
+          });
           set({ fetchedProject: data });
         } catch (error: any) {
           set({ error: error.message });
@@ -201,8 +188,9 @@ export const useDashboardStore = create<DashboardState>()(
       createWebSocketConnection: async (repositoryId: number) => {
         const token = localStorage.getItem("authToken");
         const socket = io(import.meta.env.VITE_BACK_END_URL, {
-          query: { repositoryId },
+          query: { repositoryId: repositoryId.toString() },
           transports: ["websocket"],
+          autoConnect: true,
           extraHeaders: {
             Authorization: `Bearer ${token}`,
           },
@@ -214,20 +202,11 @@ export const useDashboardStore = create<DashboardState>()(
         const selectedRepo = get().selectedRepo;
         if (!selectedRepo) return;
         try {
-          const token = localStorage.getItem("authToken");
-          await axios.post(
-            `${import.meta.env.VITE_BACK_END_URL}/repositories/deploy`,
-            {
-              owner,
-              repo,
-              githubUsername,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          await api.post("/repositories/deploy", {
+            owner,
+            repo,
+            githubUsername,
+          });
         } catch (error: any) {
           console.error(error.message);
         }

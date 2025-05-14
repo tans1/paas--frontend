@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import TextInput from "../components/atoms/textInput";
 import { useAuth } from "../hooks/auth.hook";
+import LoginRequest from "../api/auth";
 
 const Login = () => {
   const { login } = useAuth();
@@ -57,13 +57,7 @@ const Login = () => {
     setLoginError("");
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACK_END_URL}/auth/login`,
-        {
-          email: formData.email,
-          password: formData.password,
-        }
-      );
+      const response = await LoginRequest(formData)
 
       if (response.status === 200) {
         login(response.data.access_token); 

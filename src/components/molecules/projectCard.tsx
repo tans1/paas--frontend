@@ -3,28 +3,54 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+
 interface CardProps {
+  repoId: number;
   title: string;
   link?: string;
-  status?: string;
   githubUrl?: string;
+  branch?: string;
+  description: string;
 }
 
-const ProjectCard = ({ title, link, status, githubUrl }: CardProps) => {
+const ProjectCard = ({
+  title,
+  link,
+  githubUrl,
+  branch,
+  repoId,
+  description,
+}: CardProps) => {
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleCardClick = () => {
-    navigate(`/dashboard/project/details/${title}`);
+    navigate(`/dashboard/project/details/${branch}/${repoId}`);
   };
 
   const stopPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
+  const normalizeUrl = (url: string) => {
+    if (/^https?:\/\//i.test(url)) {
+      return url;
+    }
+    return "https://" + url;
+  };
+
+  const deleteProject = () => {};
 
   return (
     <div
@@ -35,34 +61,46 @@ const ProjectCard = ({ title, link, status, githubUrl }: CardProps) => {
         <div
           className="flex items-center gap-2 text-xl"
           onClick={stopPropagation}>
-          <div className="w-8 h-8 flex items-center justify-center rounded-md cursor-default">
-            {status === "active" ? (
-              <i className="fa-regular fa-circle-check text-green-500"></i>
-            ) : (
-              <i className="fa-solid fa-pause text-red-500"></i>
-            )}
-          </div>
           <div onClick={stopPropagation}>
-            <DropdownMenu>
-              <DropdownMenuTrigger className="w-4 text-center  cursor-pointer">
+            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+              <DropdownMenuTrigger className="w-4 text-center hover:cursor-pointer">
                 <i className="fa-solid fa-ellipsis-vertical text-black"></i>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setOpenDialog(true);
+                    setDropdownOpen(false);
+                  }}>
+                  Delete
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Delete project</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this project?
+                  </DialogDescription>
+                </DialogHeader>
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                  onClick={() => {
+                    deleteProject();
+                    setOpenDialog(false);
+                  }}>
+                  Confirm Delete
+                </button>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
 
       <p className="text-gray-700 text-sm" onClick={handleCardClick}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
+        {description ?? "No descriptions found"}
       </p>
 
       <div className="flex flex-col mt-6 gap-4">
@@ -74,7 +112,7 @@ const ProjectCard = ({ title, link, status, githubUrl }: CardProps) => {
             onClick={stopPropagation}
             className="flex items-baseline text-sm text-blue-600 hover:underline truncate ">
             <i className="fa-brands fa-github mr-2 text-lg text-black"></i>
-            fetch from Github repo
+            Github repo
           </a>
         </div>
 
@@ -84,7 +122,7 @@ const ProjectCard = ({ title, link, status, githubUrl }: CardProps) => {
             onClick={stopPropagation}>
             <span className="text-black">Link:</span>
             <a
-              href={link}
+              href={normalizeUrl(link)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline truncate">
