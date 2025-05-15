@@ -46,7 +46,8 @@ export default function ProjectsList() {
 
         <button
           className="ml-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition cursor-pointer"
-          onClick={handleAddProject}>
+          onClick={handleAddProject}
+        >
           + Add Project
         </button>
       </div>
@@ -55,11 +56,11 @@ export default function ProjectsList() {
         {filteredProjects.map((project, index) => (
           <ProjectCard
             key={index}
-            repoId={project.repoId}
+            repoId={project.id}
             title={project.name}
             link={project.deployedUrl}
             branch={project.branch}
-            description={project.description}
+            projectDescription={project.projectDescription}
             githubUrl={project.url}
           />
         ))}

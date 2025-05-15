@@ -21,7 +21,7 @@ interface CardProps {
   link?: string;
   githubUrl?: string;
   branch?: string;
-  description: string;
+  projectDescription: string;
 }
 
 const ProjectCard = ({
@@ -30,13 +30,17 @@ const ProjectCard = ({
   githubUrl,
   branch,
   repoId,
-  description,
+  projectDescription,
 }: CardProps) => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleCardClick = () => {
+    if (typeof repoId !== "number" || isNaN(repoId)) {
+      console.error("Invalid repoId:", repoId);
+      return;
+    }
     navigate(`/dashboard/project/details/${branch}/${repoId}`);
   };
 
@@ -55,12 +59,14 @@ const ProjectCard = ({
   return (
     <div
       className="bg-white p-4 rounded-xl shadow-md w-full cursor-pointer hover:shadow-lg transition"
-      onClick={handleCardClick}>
+      onClick={handleCardClick}
+    >
       <div className="flex justify-between items-start mb-4">
         <div className="text-2xl font-semibold text-gray-900">{title}</div>
         <div
           className="flex items-center gap-2 text-xl"
-          onClick={stopPropagation}>
+          onClick={stopPropagation}
+        >
           <div onClick={stopPropagation}>
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger className="w-4 text-center hover:cursor-pointer">
@@ -71,7 +77,8 @@ const ProjectCard = ({
                   onClick={() => {
                     setOpenDialog(true);
                     setDropdownOpen(false);
-                  }}>
+                  }}
+                >
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -90,7 +97,8 @@ const ProjectCard = ({
                   onClick={() => {
                     deleteProject();
                     setOpenDialog(false);
-                  }}>
+                  }}
+                >
                   Confirm Delete
                 </button>
               </DialogContent>
@@ -100,7 +108,7 @@ const ProjectCard = ({
       </div>
 
       <p className="text-gray-700 text-sm" onClick={handleCardClick}>
-        {description ?? "No descriptions found"}
+        {projectDescription ?? "No descriptions found"}
       </p>
 
       <div className="flex flex-col mt-6 gap-4">
@@ -110,7 +118,8 @@ const ProjectCard = ({
             target="_blank"
             rel="noopener noreferrer"
             onClick={stopPropagation}
-            className="flex items-baseline text-sm text-blue-600 hover:underline truncate ">
+            className="flex items-baseline text-sm text-blue-600 hover:underline truncate "
+          >
             <i className="fa-brands fa-github mr-2 text-lg text-black"></i>
             Github repo
           </a>
@@ -119,13 +128,15 @@ const ProjectCard = ({
         {link && (
           <div
             className="flex items-center gap-1 text-sm"
-            onClick={stopPropagation}>
+            onClick={stopPropagation}
+          >
             <span className="text-black">Link:</span>
             <a
               href={normalizeUrl(link)}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline truncate">
+              className="text-blue-600 hover:underline truncate"
+            >
               {link}
             </a>
           </div>

@@ -41,19 +41,44 @@ interface EnvVar {
   value: string;
 }
 
+interface DeploymentUpdate {
+  deploymentId: number;
+  status: string;
+  timestamp: string;
+}
+
+interface NewDeployment {
+  deploymentId: number;
+  branch: string;
+  timestamp: string;
+}
+
 export default function ProjectDetail() {
   const { repoId, branch } = useParams();
   const [newDomainName, setNewDomainName] = useState("");
   const [showLoader, setShowLoader] = useState(true);
   const [lastDeploymentId, setLastDeploymentId] = useState(-1);
 
-  const { fetchProject, fetchedProject, loading } = useDashboardStore();
+  const {
+    fetchProject,
+    fetchedProject,
+    loading,
+    createWebSocketConnection,
+    sockets,
+  } = useDashboardStore();
 
+  // Initial project fetch
   useEffect(() => {
     try {
       if (!repoId) return;
 
-      fetchProject(branch ?? "", parseInt(repoId, 10));
+      const parsedRepoId = parseInt(repoId, 10);
+      if (isNaN(parsedRepoId)) {
+        console.error("Invalid repoId:", repoId);
+        return;
+      }
+
+      fetchProject(branch ?? "", parsedRepoId);
     } catch (error) {
       console.error("Error fetching projects:", error);
     } finally {
@@ -61,6 +86,51 @@ export default function ProjectDetail() {
     }
   }, [repoId, branch, fetchProject]);
 
+  // Set up deployment WebSocket connection
+  useEffect(() => {
+    if (!repoId || !branch) return;
+
+    const parsedRepoId = parseInt(repoId, 10);
+    createWebSocketConnection(parsedRepoId, branch, "deployment");
+
+    return () => {
+      // Cleanup socket on component unmount
+      if (sockets.deployment) {
+        sockets.deployment.close();
+      }
+    };
+  }, [repoId, branch, createWebSocketConnection]);
+
+  // Handle real-time deployment updates
+  useEffect(() => {
+    if (!sockets.deployment) return;
+
+    const handleNewDeployment = (_data: NewDeployment) => {
+      // Refresh project data when a new deployment is created
+      if (repoId && branch) {
+        const parsedRepoId = parseInt(repoId, 10);
+        fetchProject(branch, parsedRepoId);
+      }
+    };
+
+    const handleDeploymentUpdate = (_data: DeploymentUpdate) => {
+      // Refresh project data when a deployment status changes
+      if (repoId && branch) {
+        const parsedRepoId = parseInt(repoId, 10);
+        fetchProject(branch, parsedRepoId);
+      }
+    };
+
+    sockets.deployment.on("newDeployment", handleNewDeployment);
+    sockets.deployment.on("deploymentUpdate", handleDeploymentUpdate);
+
+    return () => {
+      sockets.deployment?.off("newDeployment", handleNewDeployment);
+      sockets.deployment?.off("deploymentUpdate", handleDeploymentUpdate);
+    };
+  }, [sockets.deployment, repoId, branch, fetchProject]);
+
+  // Update lastDeploymentId when fetchedProject changes
   useEffect(() => {
     if (fetchedProject && fetchedProject.deployments) {
       if (fetchedProject.deployments.length > 0) {
@@ -143,7 +213,7 @@ export default function ProjectDetail() {
 
       <div className="flex justify-between items-center mt-10">
         <div>
-          <p>{fetchedProject?.description ?? "No description found"}</p>
+          <p>{fetchedProject?.projectDescription ?? "No description found"}</p>
         </div>
         <div className="flex justify-between items-center gap-10">
           <div>
@@ -156,7 +226,8 @@ export default function ProjectDetail() {
                       defaultProtocol: "https",
                     })
                   : ""
-              }>
+              }
+            >
               <span>
                 <Github className="w-5 mr-1" />
               </span>
@@ -182,7 +253,8 @@ export default function ProjectDetail() {
                       <div className="mb-10 flex items-center">
                         <label
                           htmlFor="domainName"
-                          className="text-black font-semibold mr-5 text-base">
+                          className="text-black font-semibold mr-5 text-base"
+                        >
                           Domain Name :
                         </label>
                         <input
@@ -207,7 +279,8 @@ export default function ProjectDetail() {
                             newDomainName === "" ? "bg-blue-300" : "bg-blue-500"
                           } rounded hover:cursor-pointer text-white font-semibold`}
                           onClick={handleAddDomainName}
-                          disabled={newDomainName === ""}>
+                          disabled={newDomainName === ""}
+                        >
                           Add
                         </button>
                       </div>
@@ -223,7 +296,8 @@ export default function ProjectDetail() {
               className="cursor-pointer bg-blue-600 text-white font-semibold rounded-md shadow-sm px-5 py-2 "
               to={`/dashboard/project/details/${branch}/${repoId}/logs/${
                 lastDeploymentId ? lastDeploymentId : null
-              }`}>
+              }`}
+            >
               Logs
             </Link>
           </div>
@@ -249,7 +323,8 @@ export default function ProjectDetail() {
                         : ""
                     }
                     target="_blank"
-                    className="text-blue-600">
+                    className="text-blue-600"
+                  >
                     {fetchedProject?.deployedUrl
                       ? normalizeUrl(fetchedProject?.deployedUrl, {
                           defaultProtocol: "https",
@@ -293,7 +368,8 @@ export default function ProjectDetail() {
           {(fetchedProject?.deployments ?? []).map((deployment, i) => (
             <div
               className="flex items-center px-5 py-4 justify-between border-b border-gray-200 text-gray-600"
-              key={i}>
+              key={i}
+            >
               <div className="flex w-[30%]">
                 {deployment.status === "deployed" ? (
                   <Play className="text-green-500 mr-3" fill="lightblue" />
@@ -319,7 +395,8 @@ export default function ProjectDetail() {
                 <DropdownMenuContent className="bg-white shadow-lg font-semibold w-32">
                   <Link
                     className=""
-                    to={`/dashboard/project/details/${branch}/${repoId}/logs/${deployment.id}`}>
+                    to={`/dashboard/project/details/${branch}/${repoId}/logs/${deployment.id}`}
+                  >
                     <DropdownMenuItem className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100 ">
                       Logs
                     </DropdownMenuItem>
@@ -327,13 +404,15 @@ export default function ProjectDetail() {
                   {deployment.status === "deployed" ? (
                     <DropdownMenuItem
                       className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100"
-                      onClick={handleStopDeployment}>
+                      onClick={handleStopDeployment}
+                    >
                       Stop
                     </DropdownMenuItem>
                   ) : (
                     <DropdownMenuItem
                       className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100"
-                      onClick={handleRollBack}>
+                      onClick={handleRollBack}
+                    >
                       Roll back
                     </DropdownMenuItem>
                   )}
@@ -384,7 +463,8 @@ export default function ProjectDetail() {
                       {editMode && (
                         <button
                           className="text-red-500 text-xl hover:cursor-pointer hover:bg-blue-100 px-1 rounded"
-                          onClick={() => handleRemoveEnvironment(i)}>
+                          onClick={() => handleRemoveEnvironment(i)}
+                        >
                           x
                         </button>
                       )}
@@ -404,25 +484,29 @@ export default function ProjectDetail() {
                 ).length === 0 ? (
                   <button
                     className="bg-blue-600 text-white px-5 py-2 rounded"
-                    onClick={handleEditClick}>
+                    onClick={handleEditClick}
+                  >
                     Add
                   </button>
                 ) : !editMode ? (
                   <button
                     className="bg-blue-600 text-white px-5 py-2 rounded"
-                    onClick={handleEditClick}>
+                    onClick={handleEditClick}
+                  >
                     Edit
                   </button>
                 ) : (
                   <div className="flex gap-5">
                     <button
                       className="bg-gray-200 text-black px-5 py-2 rounded hover:cursor-pointer"
-                      onClick={handleCancelClick}>
+                      onClick={handleCancelClick}
+                    >
                       Cancel
                     </button>
                     <button
                       className="bg-green-600 text-white px-5 py-2 rounded hover:cursor-pointer"
-                      onClick={handleSave}>
+                      onClick={handleSave}
+                    >
                       Save
                     </button>
                   </div>

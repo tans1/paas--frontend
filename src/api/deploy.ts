@@ -12,6 +12,11 @@ interface DeployedProject {
   repo: string | undefined;
   githubUsername: string | undefined;
   branch: string | undefined;
+  framework: string;
+  buildCommand: string | undefined;
+  installCommand: string | undefined;
+  outputDirectory: string | undefined;
+  projectDescription: string;
 }
 
 interface Project {
@@ -30,8 +35,26 @@ interface Project {
   cnameRecordId: string | null;
 }
 
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data: Project;
+}
+
 export default async function deployProject(project: DeployedProject) {
-  const { envVars, envFile, owner, repo, githubUsername, branch } = project;
+  const {
+    envVars,
+    envFile,
+    owner,
+    repo,
+    githubUsername,
+    branch,
+    framework,
+    buildCommand,
+    installCommand,
+    outputDirectory,
+    projectDescription,
+  } = project;
 
   const formData = new FormData();
 
@@ -52,8 +75,23 @@ export default async function deployProject(project: DeployedProject) {
   if (githubUsername) {
     formData.append("githubUsername", githubUsername);
   }
+  if (framework) {
+    formData.append("framework", framework);
+  }
+  if (buildCommand) {
+    formData.append("buildCommand", buildCommand);
+  }
+  if (installCommand) {
+    formData.append("installCommand", installCommand);
+  }
+  if (outputDirectory) {
+    formData.append("outputDirectory", outputDirectory);
+  }
+  if (projectDescription) {
+    formData.append("projectDescription", projectDescription);
+  }
 
-  return await api.post<Project>("/repositories/deploy", formData, {
+  return await api.post<ApiResponse>("/repositories/deploy", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
