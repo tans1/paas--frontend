@@ -13,7 +13,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { useDashboardStore } from "../store/dashboardStore";
 import normalizeUrl from "normalize-url";
@@ -32,6 +32,7 @@ import {
   DialogHeader,
   DialogClose,
   DialogTrigger,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import Lottie from "lottie-react";
 import loadingAnimation from "../lottie/loadinganimation.json";
@@ -55,9 +56,11 @@ interface NewDeployment {
 
 export default function ProjectDetail() {
   const { repoId, branch } = useParams();
+  const navigate = useNavigate();
   const [newDomainName, setNewDomainName] = useState("");
   const [showLoader, setShowLoader] = useState(true);
   const [lastDeploymentId, setLastDeploymentId] = useState(-1);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const {
     fetchProject,
@@ -65,6 +68,9 @@ export default function ProjectDetail() {
     loading,
     createWebSocketConnection,
     sockets,
+    startProject,
+    stopProject,
+    deleteProject,
   } = useDashboardStore();
 
   // Initial project fetch
@@ -139,9 +145,28 @@ export default function ProjectDetail() {
     }
   }, [fetchedProject]);
 
-  const handleStopDeployment = () => {};
+  const handleStartProject = async () => {
+    if (!fetchedProject) return;
+    await startProject(fetchedProject.id);
+  };
 
-  const handleRollBack = () => {};
+  const handleStopProject = async () => {
+    if (!fetchedProject) return;
+    await stopProject(fetchedProject.id);
+  };
+
+  const handleDeleteProject = async () => {
+    if (!fetchedProject) return;
+    setIsDeleting(true);
+    try {
+      await deleteProject(fetchedProject.id);
+      navigate("/dashboard/projects");
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleAddDomainName = () => {};
 
@@ -211,101 +236,173 @@ export default function ProjectDetail() {
     <div className="mt-10 pl-10 pr-40">
       <PagesTitle title={fetchedProject?.name || ""} subtitle="Details" />
 
-      <div className="flex justify-between items-center mt-10">
-        <div>
-          <p>{fetchedProject?.projectDescription ?? "No description found"}</p>
-        </div>
-        <div className="flex justify-between items-center gap-10">
-          <div>
-            <a
-              className="flex items-center cursor-pointer  bg-white text-black font-semibold rounded-md shadow-sm px-5 py-2"
-              target="_blank"
-              href={
-                fetchedProject?.deployedUrl
-                  ? normalizeUrl(fetchedProject?.url, {
-                      defaultProtocol: "https",
-                    })
-                  : ""
-              }
-            >
-              <span>
-                <Github className="w-5 mr-1" />
-              </span>
-              Repository
-            </a>
-          </div>
+      <div className="flex justify-between items-start mt-10">
+        <div className="max-w-2xl">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+            {fetchedProject?.name}
+          </h2>
+          <p className="text-gray-600 mb-4">
+            {fetchedProject?.projectDescription ?? "No description found"}
+          </p>
+          <div className="flex items-center gap-2">
+            {fetchedProject?.status === "STOPPED" && (
+              <button
+                onClick={handleStartProject}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-green-600 rounded hover:bg-green-700 transition-colors"
+              >
+                <i className="fa-solid fa-play text-xs"></i>
+                <span>Start</span>
+              </button>
+            )}
 
-          <div>
-            <button className="cursor-pointer bg-white text-black font-semibold rounded-md shadow-sm px-5 py-2 ">
-              Usage
-            </button>
-          </div>
+            {fetchedProject?.status === "RUNNING" && (
+              <button
+                onClick={handleStopProject}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-yellow-600 rounded hover:bg-yellow-700 transition-colors"
+              >
+                <i className="fa-solid fa-stop text-xs"></i>
+                <span>Stop</span>
+              </button>
+            )}
 
-          <div>
+            {fetchedProject?.status === "PENDING" && (
+              <button
+                disabled
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-gray-400 rounded cursor-not-allowed"
+              >
+                <i className="fa-solid fa-spinner fa-spin text-xs"></i>
+                <span>Pending...</span>
+              </button>
+            )}
+
             <Dialog>
-              <DialogTrigger className="cursor-pointer bg-white text-black font-semibold rounded-md shadow-sm px-5 py-2">
-                Add Domain Name
+              <DialogTrigger className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-red-600 rounded hover:bg-red-700 transition-colors">
+                <i className="fa-solid fa-trash text-xs"></i>
+                <span>Delete</span>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogDescription>
-                    <div className="mt-5">
-                      <div className="mb-10 flex items-center">
-                        <label
-                          htmlFor="domainName"
-                          className="text-black font-semibold mr-5 text-base"
-                        >
-                          Domain Name :
-                        </label>
-                        <input
-                          type="text"
-                          name="domainName"
-                          className="outline-none border border-blue-500 px-2 py-2 w-[60%] text-black"
-                          placeholder="example.com"
-                          value={newDomainName}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setNewDomainName(e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="flex justify-end gap-10">
-                        <DialogClose asChild>
-                          <button className="border px-3 py-1 border-gray-300 text-black rounded hover:cursor-pointer">
-                            Cancel
-                          </button>
-                        </DialogClose>
-                        <button
-                          className={`px-4 py-1 ${
-                            newDomainName === "" ? "bg-blue-300" : "bg-blue-500"
-                          } rounded hover:cursor-pointer text-white font-semibold`}
-                          onClick={handleAddDomainName}
-                          disabled={newDomainName === ""}
-                        >
-                          Add
-                        </button>
-                      </div>
-                    </div>
+                  <DialogTitle className="text-xl font-semibold">
+                    Delete Project
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-600 mt-2">
+                    Are you sure you want to delete this project? This action
+                    cannot be undone and will permanently remove all project
+                    data.
                   </DialogDescription>
                 </DialogHeader>
+                <div className="flex justify-end gap-4 mt-6">
+                  <DialogClose asChild>
+                    <button className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                      Cancel
+                    </button>
+                  </DialogClose>
+                  <button
+                    onClick={handleDeleteProject}
+                    disabled={isDeleting}
+                    className="flex items-center gap-2 px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isDeleting ? (
+                      <>
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                        <span>Deleting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-trash"></i>
+                        <span>Delete Project</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </DialogContent>
             </Dialog>
           </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <a
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            target="_blank"
+            href={
+              fetchedProject?.deployedUrl
+                ? normalizeUrl(fetchedProject?.url, {
+                    defaultProtocol: "https",
+                  })
+                : ""
+            }
+          >
+            <Github className="w-5 h-5" />
+            <span>Repository</span>
+          </a>
 
-          <div>
-            <Link
-              className="cursor-pointer bg-blue-600 text-white font-semibold rounded-md shadow-sm px-5 py-2 "
-              to={`/dashboard/project/details/${branch}/${repoId}/logs/${
-                lastDeploymentId ? lastDeploymentId : null
-              }`}
-            >
-              Logs
-            </Link>
-          </div>
+          <button className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <i className="fa-solid fa-chart-line"></i>
+            <span>Usage</span>
+          </button>
+
+          <Dialog>
+            <DialogTrigger className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <i className="fa-solid fa-globe"></i>
+              <span>Add Domain</span>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogDescription>
+                  <div className="mt-5">
+                    <div className="mb-10 flex items-center">
+                      <label
+                        htmlFor="domainName"
+                        className="text-black font-semibold mr-5 text-base"
+                      >
+                        Domain Name :
+                      </label>
+                      <input
+                        type="text"
+                        name="domainName"
+                        className="outline-none border border-blue-500 px-2 py-2 w-[60%] text-black"
+                        placeholder="example.com"
+                        value={newDomainName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setNewDomainName(e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="flex justify-end gap-10">
+                      <DialogClose asChild>
+                        <button className="border px-3 py-1 border-gray-300 text-black rounded hover:cursor-pointer">
+                          Cancel
+                        </button>
+                      </DialogClose>
+                      <button
+                        className={`px-4 py-1 ${
+                          newDomainName === "" ? "bg-blue-300" : "bg-blue-500"
+                        } rounded hover:cursor-pointer text-white font-semibold`}
+                        onClick={handleAddDomainName}
+                        disabled={newDomainName === ""}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+
+          <Link
+            className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            to={`/dashboard/project/details/${branch}/${repoId}/logs/${
+              lastDeploymentId ? lastDeploymentId : null
+            }`}
+          >
+            <i className="fa-solid fa-terminal"></i>
+            <span>Logs</span>
+          </Link>
         </div>
       </div>
 
       <div className="mt-10 grid grid-cols-8">
-        <div className=" col-span-3  border p-5">
+        <div className="col-span-3 border p-5">
           <div>
             <p className="text-2xl font-bold pt-0 pb-2">Details</p>
           </div>
@@ -355,13 +452,13 @@ export default function ProjectDetail() {
               </p>
               <p className="flex items-center whitespace-nowrap">
                 <GitCommitHorizontal className="w-5" />
-                last commit message
+                {fetchedProject?.lastCommitMessage || "No commit message"}
               </p>
             </li>
           </ul>
         </div>
         <div className="col-span-1"></div>
-        <div className=" col-span-4 shadow-sm ">
+        <div className="col-span-4 shadow-sm">
           <div>
             <p className="text-2xl font-bold pt-0 pb-2 pl-5">Deployments</p>
           </div>
@@ -384,38 +481,24 @@ export default function ProjectDetail() {
                   </div>
                 )}
               </div>
-              <div className="pl-2">commit message</div>
+              <div className="pl-2">
+                {deployment.lastCommitMessage || "No commit message"}
+              </div>
               <div className="">
                 {dateFormat(deployment.createdAt, " mmmm dS, yyyy, h:MM TT")}
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-4 text-center  cursor-pointer">
+                <DropdownMenuTrigger className="w-4 text-center cursor-pointer">
                   <i className="fa-solid fa-ellipsis-vertical text-black"></i>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-white shadow-lg font-semibold w-32">
                   <Link
-                    className=""
                     to={`/dashboard/project/details/${branch}/${repoId}/logs/${deployment.id}`}
                   >
-                    <DropdownMenuItem className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100 ">
+                    <DropdownMenuItem className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100">
                       Logs
                     </DropdownMenuItem>
                   </Link>
-                  {deployment.status === "deployed" ? (
-                    <DropdownMenuItem
-                      className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100"
-                      onClick={handleStopDeployment}
-                    >
-                      Stop
-                    </DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem
-                      className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100"
-                      onClick={handleRollBack}
-                    >
-                      Roll back
-                    </DropdownMenuItem>
-                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -431,50 +514,38 @@ export default function ProjectDetail() {
             </AccordionTrigger>
             <AccordionContent>
               <div className="text-base mb-7">
-                {envVars
-                  // .filter(
-                  //   (env: { key: string; value: string }, _) =>
-                  //     env.key !== "" && env.value !== ""
-                  // )
-                  .map((env: { key: string; value: string }, i) => (
-                    <div key={i} className="flex gap-5 mb-4">
-                      <input
-                        type="text"
-                        placeholder="KEY"
-                        disabled={!editMode}
-                        value={env.key}
-                        onChange={(e) => handleChange(i, "key", e.target.value)}
-                        className={`p-1 outline-none ${
-                          editMode ? "border border-gray-400" : ""
-                        }`}
-                      />
-                      <input
-                        type="text"
-                        placeholder="VALUE"
-                        disabled={!editMode}
-                        value={env.value}
-                        onChange={(e) =>
-                          handleChange(i, "value", e.target.value)
-                        }
-                        className={`p-1 outline-none ${
-                          editMode ? "border border-gray-400" : ""
-                        }`}
-                      />
-                      {editMode && (
-                        <button
-                          className="text-red-500 text-xl hover:cursor-pointer hover:bg-blue-100 px-1 rounded"
-                          onClick={() => handleRemoveEnvironment(i)}
-                        >
-                          x
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                {!editMode &&
-                  envVars.filter(
-                    (env: { key: string; value: string }, _) =>
-                      env.key !== "" && env.value !== ""
-                  ).length === 0 && <div>No environment variables added</div>}
+                {envVars.map((env: { key: string; value: string }, i) => (
+                  <div key={i} className="flex gap-5 mb-4">
+                    <input
+                      type="text"
+                      placeholder="KEY"
+                      disabled={!editMode}
+                      value={env.key}
+                      onChange={(e) => handleChange(i, "key", e.target.value)}
+                      className={`p-1 outline-none ${
+                        editMode ? "border border-gray-400" : ""
+                      }`}
+                    />
+                    <input
+                      type="text"
+                      placeholder="VALUE"
+                      disabled={!editMode}
+                      value={env.value}
+                      onChange={(e) => handleChange(i, "value", e.target.value)}
+                      className={`p-1 outline-none ${
+                        editMode ? "border border-gray-400" : ""
+                      }`}
+                    />
+                    {editMode && (
+                      <button
+                        className="text-red-500 text-xl hover:cursor-pointer hover:bg-blue-100 px-1 rounded"
+                        onClick={() => handleRemoveEnvironment(i)}
+                      >
+                        x
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
               <div>
                 {!editMode &&

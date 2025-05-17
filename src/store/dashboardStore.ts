@@ -40,6 +40,7 @@ interface Deployment {
   createdAt: string;
   logs?: Log[];
   projectDescription: string;
+  lastCommitMessage?: string;
 }
 
 interface Project {
@@ -55,6 +56,8 @@ interface Project {
   deployedPort?: number;
   deployedUrl: string;
   deployments?: Deployment[];
+  status: "STOPPED" | "RUNNING" | "PENDING";
+  lastCommitMessage?: string;
 }
 
 interface ProjectToBeDeployed {
@@ -115,6 +118,11 @@ interface DashboardState {
 
   toBeDeployedProject: ProjectToBeDeployed | null;
   setToBeDeployedProject: (project: ProjectToBeDeployed) => void;
+
+  // Project management functions
+  startProject: (projectId: number) => Promise<void>;
+  stopProject: (projectId: number) => Promise<void>;
+  deleteProject: (projectId: number) => Promise<void>;
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -275,6 +283,45 @@ export const useDashboardStore = create<DashboardState>()(
       setToBeDeployedProject: (project) => {
         console.log("Store: Setting project to be deployed:", project);
         set({ toBeDeployedProject: project });
+      },
+
+      startProject: async (projectId: number) => {
+        try {
+          await api.post("/projects/start-project", { id: projectId });
+          // Refresh project data after starting
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            get().fetchProject(currentProject.branch, currentProject.repoId);
+          }
+        } catch (error: any) {
+          console.error("Error starting project:", error.message);
+          set({ error: error.message });
+        }
+      },
+
+      stopProject: async (projectId: number) => {
+        try {
+          await api.post("/projects/stop-project", { id: projectId });
+          // Refresh project data after stopping
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            get().fetchProject(currentProject.branch, currentProject.repoId);
+          }
+        } catch (error: any) {
+          console.error("Error stopping project:", error.message);
+          set({ error: error.message });
+        }
+      },
+
+      deleteProject: async (projectId: number) => {
+        try {
+          await api.post("/projects/delete-project", { id: projectId });
+          // Clear current project and redirect to projects list
+          set({ fetchedProject: null, currentProject: null });
+        } catch (error: any) {
+          console.error("Error deleting project:", error.message);
+          set({ error: error.message });
+        }
       },
     }),
     {

@@ -16,9 +16,9 @@ export default function ProjectsList() {
   };
 
   useEffect(() => {
-    if (projects.length === 0) {
-      fetchProjects();
-    }
+    fetchProjects();
+    // if (projects.length === 0) {
+    // }
   }, [projects.length, fetchProjects]);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function ProjectsList() {
         {filteredProjects.map((project, index) => (
           <ProjectCard
             key={index}
-            repoId={project.id}
+            repoId={project.repoId}
             title={project.name}
             link={project.deployedUrl}
             branch={project.branch}

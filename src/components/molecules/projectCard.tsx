@@ -5,14 +5,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useState } from "react";
 
 interface CardProps {
@@ -33,7 +25,6 @@ const ProjectCard = ({
   projectDescription,
 }: CardProps) => {
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleCardClick = () => {
@@ -54,8 +45,6 @@ const ProjectCard = ({
     return "https://" + url;
   };
 
-  const deleteProject = () => {};
-
   return (
     <div
       className="bg-white p-4 rounded-xl shadow-md w-full cursor-pointer hover:shadow-lg transition"
@@ -73,36 +62,11 @@ const ProjectCard = ({
                 <i className="fa-solid fa-ellipsis-vertical text-black"></i>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setOpenDialog(true);
-                    setDropdownOpen(false);
-                  }}
-                >
-                  Delete
+                <DropdownMenuItem onClick={handleCardClick}>
+                  View Details
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Delete project</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete this project?
-                  </DialogDescription>
-                </DialogHeader>
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => {
-                    deleteProject();
-                    setOpenDialog(false);
-                  }}
-                >
-                  Confirm Delete
-                </button>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </div>
