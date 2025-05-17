@@ -14,13 +14,13 @@ interface Repo {
   forks_count: number;
   created_at: string;
   branches: string[];
-  // lastUpdated?: string;
 }
 
 interface Log {
   id: number;
   message: string;
   deploymentId: number;
+  logType: "build" | "runtime";
 }
 
 // New interfaces for projects and deployments based on your schema
@@ -39,6 +39,8 @@ interface Deployment {
   rollbackedDeployments?: Deployment[];
   createdAt: string;
   logs?: Log[];
+  projectDescription: string;
+  lastCommitMessage?: string;
 }
 
 interface Project {
@@ -46,7 +48,7 @@ interface Project {
   repoId: number;
   name: string;
   url: string;
-  description: string;
+  projectDescription: string;
   branch: string;
   linkedByUserId: number;
   createdAt: string;
@@ -54,6 +56,8 @@ interface Project {
   deployedPort?: number;
   deployedUrl: string;
   deployments?: Deployment[];
+  status: "STOPPED" | "RUNNING" | "PENDING";
+  lastCommitMessage?: string;
 }
 
 interface ProjectToBeDeployed {
@@ -95,8 +99,16 @@ interface DashboardState {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
 
-  socket: Socket | null;
-  createWebSocketConnection: (repositoryId: number) => Promise<void>;
+  sockets: {
+    build: Socket | null;
+    runtime: Socket | null;
+    deployment: Socket | null;
+  };
+  createWebSocketConnection: (
+    repositoryId: number,
+    branch: string,
+    type: "build" | "runtime" | "deployment"
+  ) => Promise<void>;
 
   deploy: (
     owner: string,
@@ -106,6 +118,11 @@ interface DashboardState {
 
   toBeDeployedProject: ProjectToBeDeployed | null;
   setToBeDeployedProject: (project: ProjectToBeDeployed) => void;
+
+  // Project management functions
+  startProject: (projectId: number) => Promise<void>;
+  stopProject: (projectId: number) => Promise<void>;
+  deleteProject: (projectId: number) => Promise<void>;
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -184,18 +201,69 @@ export const useDashboardStore = create<DashboardState>()(
       modalOpen: false,
       setModalOpen: (open) => set({ modalOpen: open }),
 
-      socket: null,
-      createWebSocketConnection: async (repositoryId: number) => {
+      sockets: {
+        build: null,
+        runtime: null,
+        deployment: null,
+      },
+      createWebSocketConnection: async (
+        repositoryId: number,
+        branch: string,
+        type: "build" | "runtime" | "deployment"
+      ) => {
         const token = localStorage.getItem("authToken");
-        const socket = io(import.meta.env.VITE_BACK_END_URL, {
-          query: { repositoryId: repositoryId.toString() },
+
+        console.log(`Creating ${type} socket connection:`, {
+          repositoryId,
+          branch,
+          type,
+          existingSocket: get().sockets[type] ? "exists" : "none",
+        });
+
+        // Close existing socket if it exists
+        const existingSocket = get().sockets[type];
+        if (existingSocket) {
+          console.log(`Closing existing ${type} socket`);
+          existingSocket.close();
+        }
+
+        // Determine the namespace based on the type
+        const namespace =
+          type === "deployment" ? "/deployments" : "/build-logs";
+
+        const socket = io(`${import.meta.env.VITE_BACK_END_URL}${namespace}`, {
+          query: {
+            repositoryId: repositoryId.toString(),
+            branch,
+            type,
+          },
           transports: ["websocket"],
           autoConnect: true,
           extraHeaders: {
             Authorization: `Bearer ${token}`,
           },
         });
-        set({ socket });
+
+        // Add connection event listeners
+        socket.on("connect", () => {
+          console.log(`${type} socket connected successfully to ${namespace}`);
+        });
+
+        socket.on("connect_error", (error: Error) => {
+          console.error(`${type} socket connection error:`, error);
+        });
+
+        socket.on("disconnect", (reason: string) => {
+          console.log(`${type} socket disconnected:`, reason);
+        });
+
+        // Set the new socket in the appropriate slot
+        set((state) => ({
+          sockets: {
+            ...state.sockets,
+            [type]: socket,
+          },
+        }));
       },
 
       deploy: async (owner: string, repo: string, githubUsername: string) => {
@@ -212,8 +280,49 @@ export const useDashboardStore = create<DashboardState>()(
         }
       },
       toBeDeployedProject: null,
-      setToBeDeployedProject: (project) =>
-        set({ toBeDeployedProject: project }),
+      setToBeDeployedProject: (project) => {
+        console.log("Store: Setting project to be deployed:", project);
+        set({ toBeDeployedProject: project });
+      },
+
+      startProject: async (projectId: number) => {
+        try {
+          await api.post("/projects/start-project", { id: projectId });
+          // Refresh project data after starting
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            get().fetchProject(currentProject.branch, currentProject.repoId);
+          }
+        } catch (error: any) {
+          console.error("Error starting project:", error.message);
+          set({ error: error.message });
+        }
+      },
+
+      stopProject: async (projectId: number) => {
+        try {
+          await api.post("/projects/stop-project", { id: projectId });
+          // Refresh project data after stopping
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            get().fetchProject(currentProject.branch, currentProject.repoId);
+          }
+        } catch (error: any) {
+          console.error("Error stopping project:", error.message);
+          set({ error: error.message });
+        }
+      },
+
+      deleteProject: async (projectId: number) => {
+        try {
+          await api.post("/projects/delete-project", { id: projectId });
+          // Clear current project and redirect to projects list
+          set({ fetchedProject: null, currentProject: null });
+        } catch (error: any) {
+          console.error("Error deleting project:", error.message);
+          set({ error: error.message });
+        }
+      },
     }),
     {
       name: "dashboard-storage",

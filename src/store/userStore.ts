@@ -15,7 +15,7 @@ interface UserState {
   login: (token: string) => Promise<void>;
   logout: () => void;
   fetchUserProfile: () => Promise<void>;
-  setGithubUsername: (username: string) => void; 
+  setGithubUsername: (username: string) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -27,8 +27,7 @@ export const useUserStore = create<UserState>()(
       login: async (token: string) => {
         localStorage.setItem("authToken", token);
         set({ isAuthenticated: true });
-        await get().
-        fetchUserProfile();
+        await get().fetchUserProfile();
       },
 
       logout: () => {
@@ -42,14 +41,16 @@ export const useUserStore = create<UserState>()(
           if (!token) return;
 
           const { data } = await axios.get<User>(
-            `${process.env.REACT_APP_BACK_END_URL}/auth/me`,
+            `${import.meta.env.VITE_BACK_END_URL}/user/profile`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
 
-          set({ user: data });
+          set((state) => ({
+            user: { ...state.user, ...data } as User,
+          }));
         } catch (error) {
           console.error("Failed to fetch user profile:", error);
-          get().logout(); 
+          get().logout();
         }
       },
 
@@ -59,6 +60,6 @@ export const useUserStore = create<UserState>()(
         }));
       },
     }),
-    { name: "user-storage" } 
+    { name: "user-storage" }
   )
 );

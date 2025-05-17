@@ -16,9 +16,9 @@ export default function ProjectsList() {
   };
 
   useEffect(() => {
-    if (projects.length === 0) {
-      fetchProjects();
-    }
+    fetchProjects();
+    // if (projects.length === 0) {
+    // }
   }, [projects.length, fetchProjects]);
 
   useEffect(() => {
@@ -46,7 +46,8 @@ export default function ProjectsList() {
 
         <button
           className="ml-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition cursor-pointer"
-          onClick={handleAddProject}>
+          onClick={handleAddProject}
+        >
           + Add Project
         </button>
       </div>
@@ -59,7 +60,7 @@ export default function ProjectsList() {
             title={project.name}
             link={project.deployedUrl}
             branch={project.branch}
-            description={project.description}
+            projectDescription={project.projectDescription}
             githubUrl={project.url}
           />
         ))}

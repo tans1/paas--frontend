@@ -1,5 +1,6 @@
 import PagesTitle from "../components/atoms/pagesTitle";
 import UserRepositoryListItem from "../components/molecules/userRepositoryListItem";
+import { useUserStore } from "../store/userStore";
 
 import {
   Table,
@@ -16,6 +17,7 @@ import loadingAnimation from "../lottie/loadinganimation.json";
 
 export default function AddProject() {
   const { fetchRepositories, repositories, loading } = useDashboardStore();
+  const { user } = useUserStore();
   const [showLoader, setShowLoader] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,6 +42,28 @@ export default function AddProject() {
       repositories.filter((repo) => repo.name.toLowerCase().startsWith(term))
     );
   }, [repositories, searchTerm]);
+
+  if (!user?.githubUsername) {
+    return (
+      <div className="w-full mt-10 pl-10 pr-40">
+        <PagesTitle title="Add Project" subtitle="Repositories" />
+        <div className="mt-6 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-center gap-3">
+            <i className="fa-solid fa-triangle-exclamation text-yellow-500 text-xl"></i>
+            <div>
+              <h3 className="text-lg font-medium text-yellow-800">
+                GitHub Account Required
+              </h3>
+              <p className="mt-1 text-sm text-yellow-700">
+                Please connect your GitHub account to add projects. You can do
+                this in the dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mt-10 pl-10 pr-40">
