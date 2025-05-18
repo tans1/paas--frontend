@@ -50,12 +50,12 @@ export default function DeployProject() {
 
   const frameworks = [
     "React",
-    "Next.js",
     "Vue.js",
     "Angular",
-    "Nuxt.js",
-    "Express.js",
     "Nestjs",
+    "Docker",
+    "CreateReactApp",
+    "Vite"
   ];
 
   const [tab, setTab] = useState<string>("file");

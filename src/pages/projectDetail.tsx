@@ -13,7 +13,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { useParams, Link, useNavigate } from "react-router";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDashboardStore } from "../store/dashboardStore";
 import normalizeUrl from "normalize-url";
@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 import {
   Dialog,
@@ -42,18 +42,6 @@ interface EnvVar {
   value: string;
 }
 
-interface DeploymentUpdate {
-  deploymentId: number;
-  status: string;
-  timestamp: string;
-}
-
-interface NewDeployment {
-  deploymentId: number;
-  branch: string;
-  timestamp: string;
-}
-
 export default function ProjectDetail() {
   const { repoId, branch } = useParams();
   const navigate = useNavigate();
@@ -61,6 +49,13 @@ export default function ProjectDetail() {
   const [showLoader, setShowLoader] = useState(true);
   const [lastDeploymentId, setLastDeploymentId] = useState(-1);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [isStopping, setIsStopping] = useState(false);
+  const [isRollingBack, setIsRollingBack] = useState<number | null>(null);
+  const [showRollbackConfirm, setShowRollbackConfirm] = useState<number | null>(
+    null
+  );
+  const [isRollbackLoading, setIsRollbackLoading] = useState(false);
 
   const {
     fetchProject,
@@ -71,6 +66,7 @@ export default function ProjectDetail() {
     startProject,
     stopProject,
     deleteProject,
+    rollbackProject,
   } = useDashboardStore();
 
   // Initial project fetch
@@ -96,10 +92,12 @@ export default function ProjectDetail() {
   useEffect(() => {
     if (!repoId || !branch) return;
 
+    console.log("Setting up WebSocket connection:", { repoId, branch });
     const parsedRepoId = parseInt(repoId, 10);
     createWebSocketConnection(parsedRepoId, branch, "deployment");
 
     return () => {
+      console.log("Cleaning up WebSocket connection");
       // Cleanup socket on component unmount
       if (sockets.deployment) {
         sockets.deployment.close();
@@ -111,19 +109,17 @@ export default function ProjectDetail() {
   useEffect(() => {
     if (!sockets.deployment) return;
 
-    const handleNewDeployment = (_data: NewDeployment) => {
-      // Refresh project data when a new deployment is created
+    const handleNewDeployment = async () => {
       if (repoId && branch) {
         const parsedRepoId = parseInt(repoId, 10);
-        fetchProject(branch, parsedRepoId);
+        await fetchProject(branch, parsedRepoId);
       }
     };
 
-    const handleDeploymentUpdate = (_data: DeploymentUpdate) => {
-      // Refresh project data when a deployment status changes
+    const handleDeploymentUpdate = async () => {
       if (repoId && branch) {
         const parsedRepoId = parseInt(repoId, 10);
-        fetchProject(branch, parsedRepoId);
+        await fetchProject(branch, parsedRepoId);
       }
     };
 
@@ -147,12 +143,26 @@ export default function ProjectDetail() {
 
   const handleStartProject = async () => {
     if (!fetchedProject) return;
-    await startProject(fetchedProject.id);
+    setIsStarting(true);
+    try {
+      await startProject(fetchedProject.id);
+    } catch (error) {
+      console.error("Error starting project:", error);
+    } finally {
+      setIsStarting(false);
+    }
   };
 
   const handleStopProject = async () => {
     if (!fetchedProject) return;
-    await stopProject(fetchedProject.id);
+    setIsStopping(true);
+    try {
+      await stopProject(fetchedProject.id);
+    } catch (error) {
+      console.error("Error stopping project:", error);
+    } finally {
+      setIsStopping(false);
+    }
   };
 
   const handleDeleteProject = async () => {
@@ -208,7 +218,7 @@ export default function ProjectDetail() {
   const handleSave = () => {
     const payload = envVars
       .filter(
-        (env: { key: string; value: string }, _) =>
+        (env: { key: string; value: string }) =>
           env.key !== "" && env.value !== ""
       )
       .map((e) => ({ key: e.key.trim(), value: e.value }));
@@ -220,6 +230,22 @@ export default function ProjectDetail() {
 
   const handleRemoveEnvironment = (indexToRemove: number) => {
     setEnvVars((prev) => prev.filter((_, i) => i !== indexToRemove));
+  };
+
+  const handleRollback = async (deploymentId: number) => {
+    if (!fetchedProject) return;
+
+    try {
+      setIsRollingBack(deploymentId);
+      setIsRollbackLoading(true);
+      await rollbackProject(fetchedProject.id, deploymentId);
+    } catch (error) {
+      console.error("Rollback failed:", error);
+    } finally {
+      setIsRollingBack(null);
+      setIsRollbackLoading(false);
+      setShowRollbackConfirm(null);
+    }
   };
 
   if (loading || showLoader) {
@@ -248,20 +274,40 @@ export default function ProjectDetail() {
             {fetchedProject?.status === "STOPPED" && (
               <button
                 onClick={handleStartProject}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-green-600 rounded hover:bg-green-700 transition-colors"
+                disabled={isStarting}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-green-600 rounded hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <i className="fa-solid fa-play text-xs"></i>
-                <span>Start</span>
+                {isStarting ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin text-xs"></i>
+                    <span>Starting...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-play text-xs"></i>
+                    <span>Start</span>
+                  </>
+                )}
               </button>
             )}
 
             {fetchedProject?.status === "RUNNING" && (
               <button
                 onClick={handleStopProject}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-yellow-600 rounded hover:bg-yellow-700 transition-colors"
+                disabled={isStopping}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-yellow-600 rounded hover:bg-yellow-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <i className="fa-solid fa-stop text-xs"></i>
-                <span>Stop</span>
+                {isStopping ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin text-xs"></i>
+                    <span>Stopping...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-stop text-xs"></i>
+                    <span>Stop</span>
+                  </>
+                )}
               </button>
             )}
 
@@ -462,47 +508,115 @@ export default function ProjectDetail() {
           <div>
             <p className="text-2xl font-bold pt-0 pb-2 pl-5">Deployments</p>
           </div>
-          {(fetchedProject?.deployments ?? []).map((deployment, i) => (
-            <div
-              className="flex items-center px-5 py-4 justify-between border-b border-gray-200 text-gray-600"
-              key={i}
-            >
-              <div className="flex w-[30%]">
-                {deployment.status === "deployed" ? (
-                  <Play className="text-green-500 mr-3" fill="lightblue" />
-                ) : (
-                  <Pause className="text-red-500 mr-3" fill="red" />
-                )}
-                {deployment.status}
+          {[...(fetchedProject?.deployments ?? [])]
+            .sort((a, b) => {
+              // Always put active deployment at the top
+              if (a.id === fetchedProject?.activeDeploymentId) return -1;
+              if (b.id === fetchedProject?.activeDeploymentId) return 1;
+              // Sort remaining deployments by creation date
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
+            })
+            .map((deployment, i) => (
+              <div
+                className={`flex items-center px-5 py-4 justify-between border-b border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors ${
+                  deployment.id === fetchedProject?.activeDeploymentId
+                    ? "bg-blue-50"
+                    : ""
+                }`}
+                key={i}
+              >
+                <div className="flex w-[30%]">
+                  {deployment.status === "deployed" ? (
+                    <Play className="text-green-500 mr-3" fill="lightblue" />
+                  ) : (
+                    <Pause className="text-red-500 mr-3" fill="red" />
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="capitalize">{deployment.status}</span>
+                    {deployment.id === fetchedProject?.activeDeploymentId && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="pl-2 flex-1">
+                  <p className="text-gray-900 font-medium">
+                    {deployment.lastCommitMessage || "No commit message"}
+                  </p>
+                </div>
+                <div className="text-sm text-gray-500">
+                  {dateFormat(deployment.createdAt, "mmmm dS, yyyy, h:MM TT")}
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="w-4 text-center cursor-pointer">
+                    <i className="fa-solid fa-ellipsis-vertical text-black"></i>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white shadow-lg font-semibold w-32">
+                    <Link
+                      to={`/dashboard/project/details/${branch}/${repoId}/logs/${deployment.id}`}
+                    >
+                      <DropdownMenuItem className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100">
+                        Logs
+                      </DropdownMenuItem>
+                    </Link>
+                    {i !== 0 && deployment.status === "deployed" && (
+                      <DropdownMenuItem
+                        className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100 text-blue-600"
+                        onClick={() => setShowRollbackConfirm(deployment.id)}
+                      >
+                        Rollback to this version
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-                {i === 0 && (
-                  <div className="border border-blue-500 rounded-2xl px-1 pr-2 text-[11px] text-blue-500 flex items-center ml-2">
-                    + current
+                {showRollbackConfirm === deployment.id && (
+                  <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl border border-gray-100">
+                      <h3 className="text-xl font-semibold mb-2">
+                        Confirm Rollback
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Are you sure you want to rollback to this version? This
+                        will make this deployment the current version.
+                      </p>
+                      <div className="flex justify-end gap-4">
+                        <button
+                          onClick={() => setShowRollbackConfirm(null)}
+                          className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleRollback(deployment.id)}
+                          disabled={
+                            isRollingBack === deployment.id || isRollbackLoading
+                          }
+                          className="flex items-center gap-2 px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isRollingBack === deployment.id ||
+                          isRollbackLoading ? (
+                            <>
+                              <i className="fa-solid fa-spinner fa-spin"></i>
+                              <span>Rolling back...</span>
+                            </>
+                          ) : (
+                            <>
+                              <i className="fa-solid fa-rotate-left"></i>
+                              <span>Rollback</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
-              <div className="pl-2">
-                {deployment.lastCommitMessage || "No commit message"}
-              </div>
-              <div className="">
-                {dateFormat(deployment.createdAt, " mmmm dS, yyyy, h:MM TT")}
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="w-4 text-center cursor-pointer">
-                  <i className="fa-solid fa-ellipsis-vertical text-black"></i>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-white shadow-lg font-semibold w-32">
-                  <Link
-                    to={`/dashboard/project/details/${branch}/${repoId}/logs/${deployment.id}`}
-                  >
-                    <DropdownMenuItem className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100">
-                      Logs
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
@@ -550,7 +664,7 @@ export default function ProjectDetail() {
               <div>
                 {!editMode &&
                 envVars.filter(
-                  (env: { key: string; value: string }, _) =>
+                  (env: { key: string; value: string }) =>
                     env.key !== "" && env.value !== ""
                 ).length === 0 ? (
                   <button

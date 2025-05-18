@@ -13,6 +13,7 @@ interface Repo {
   default_branch: string;
   forks_count: number;
   created_at: string;
+  updated_at: string;
   branches: string[];
 }
 
@@ -58,6 +59,7 @@ interface Project {
   deployments?: Deployment[];
   status: "STOPPED" | "RUNNING" | "PENDING";
   lastCommitMessage?: string;
+  activeDeploymentId?: number;
 }
 
 interface ProjectToBeDeployed {
@@ -83,6 +85,7 @@ interface DashboardState {
   error: string | null;
 
   fetchRepositories: () => Promise<void>;
+  connectGithub: () => Promise<string>;
 
   // Properties for projects
   projects: Project[];
@@ -123,6 +126,7 @@ interface DashboardState {
   startProject: (projectId: number) => Promise<void>;
   stopProject: (projectId: number) => Promise<void>;
   deleteProject: (projectId: number) => Promise<void>;
+  rollbackProject: (projectId: number, deploymentId: number) => Promise<void>;
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -153,6 +157,7 @@ export const useDashboardStore = create<DashboardState>()(
             default_branch: repo.default_branch,
             forks_count: repo.forks_count,
             created_at: repo.created_at,
+            updated_at: repo.updated_at,
             branches: repo.branches,
           }));
           set({ repositories });
@@ -321,6 +326,40 @@ export const useDashboardStore = create<DashboardState>()(
         } catch (error: any) {
           console.error("Error deleting project:", error.message);
           set({ error: error.message });
+        }
+      },
+
+      rollbackProject: async (projectId: number, deploymentId: number) => {
+        try {
+          const response = await api.post("/projects/rollback-project", {
+            projectId,
+            deploymentId,
+          });
+
+          if (response.data.success) {
+            // Refresh project data after rollback
+            const currentProject = get().fetchedProject;
+            if (currentProject) {
+              await get().fetchProject(
+                currentProject.branch,
+                currentProject.repoId
+              );
+            }
+          }
+        } catch (error: any) {
+          console.error("Error rolling back project:", error.message);
+          set({ error: error.message });
+        }
+      },
+
+      connectGithub: async () => {
+        try {
+          const { data } = await api.get("/repositories/connect/github");
+          console.log("data", data);
+          return data.url;
+        } catch (error) {
+          console.error("Error connecting to GitHub:", error);
+          throw error;
         }
       },
     }),
