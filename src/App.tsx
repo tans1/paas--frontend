@@ -11,6 +11,7 @@ import Login from "./pages/login";
 import LoginSuccess from "./pages/login-success";
 import ProtectedRoute from "./routes/protected.routes";
 import DashboardStructure from "./components/templates/dashboardStructure";
+import Settings from "./pages/settings"
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function App() {
@@ -32,6 +33,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="settings/*"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
