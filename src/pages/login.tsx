@@ -25,7 +25,7 @@ const Login = () => {
         error = "Invalid email format.";
       }
     } else if (name === "password") {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
       if (!passwordRegex.test(value)) {
         error =
           "Password must be at least 8 characters long, with at least 1 uppercase letter, 1 lowercase letter, and 1 symbol.";
@@ -60,7 +60,7 @@ const Login = () => {
       const response = await LoginRequest(formData)
 
       if (response.status === 200) {
-        login(response.data.access_token); 
+        login(response.data.access_token);
         navigate("/dashboard");
       }
     } catch (error: any) {
@@ -111,11 +111,10 @@ const Login = () => {
 
           <button
             type="submit"
-            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${
-              isFormValid
+            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid
                 ? "bg-black hover:bg-gray-800"
                 : "bg-gray-400 cursor-not-allowed"
-            }`}
+              }`}
             disabled={!isFormValid || isLoading}>
             {isLoading ? "Signing In..." : "Sign In"}
           </button>

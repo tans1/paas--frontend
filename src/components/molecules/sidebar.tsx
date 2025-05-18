@@ -33,7 +33,7 @@ const AppSidebar: React.FC = () => {
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings/profile",
       icon: Settings,
     },
     {
