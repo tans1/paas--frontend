@@ -60,7 +60,7 @@ const Header = () => {
             {user ? (
               <>
                 <Link
-                  to="/dashboard/projects"
+                  to="/dashboard/"
                   className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
                 >
                   Dashboard

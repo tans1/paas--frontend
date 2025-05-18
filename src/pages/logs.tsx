@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import PagesTitle from "../components/atoms/pagesTitle";
 import {
   Breadcrumb,
@@ -23,6 +23,8 @@ export default function LogsPage() {
   const [runtimeLogs, setRuntimeLogs] = useState<string[]>([]);
   const [tab, setTab] = useState<string>("buildLog");
   const [isBuilding, setIsBuilding] = useState(false);
+  const [showBuildComplete, setShowBuildComplete] = useState(false);
+  const navigate = useNavigate();
 
   const { sockets, createWebSocketConnection, fetchProject, fetchedProject } =
     useDashboardStore();
@@ -100,6 +102,8 @@ export default function LogsPage() {
       setIsBuilding(false);
       // Switch to runtime tab when build is complete
       setTab("runtimeLog");
+      // Show build complete notification
+      setShowBuildComplete(true);
       // Optionally close the build socket
       sockets.build?.close();
     };
@@ -131,6 +135,12 @@ export default function LogsPage() {
     <Breadcrumb className="text-xl font-semibold">
       <BreadcrumbList>
         <BreadcrumbItem>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mr-2"
+          >
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
           <BreadcrumbLink
             href={`/dashboard/project/details/${branch}/${repoId}`}
           >
@@ -151,6 +161,25 @@ export default function LogsPage() {
         title={fetchedProject?.name ?? ""}
         component={headerBreadCrumb}
       />
+      {showBuildComplete && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <i className="fa-solid fa-circle-check text-green-500"></i>
+            <span className="text-green-700">
+              Build completed successfully!
+            </span>
+          </div>
+          <button
+            onClick={() =>
+              navigate(`/dashboard/project/details/${branch}/${repoId}`)
+            }
+            className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
+          >
+            <span>Go to Project Details</span>
+            <i className="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      )}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="buildLog">Build Logs</TabsTrigger>

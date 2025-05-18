@@ -16,7 +16,8 @@ import loadingAnimation from "../lottie/loadinganimation.json";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { fetchProjects, projects, loading } = useDashboardStore();
+  const { fetchProjects, projects, loading, connectGithub } =
+    useDashboardStore();
   const { user } = useUserStore();
   const [showLoader, setShowLoader] = useState(true);
 
@@ -30,8 +31,15 @@ const Dashboard = () => {
     navigate("/dashboard/projects");
   };
 
-  const handleGithubConnect = () => {
-    window.location.href = `${import.meta.env.VITE_BACK_END_URL}/oauth/github`;
+  const handleGithubConnect = async () => {
+    try {
+      const githubUrl = await connectGithub();
+      if (githubUrl) {
+        window.location.href = githubUrl;
+      }
+    } catch (error) {
+      console.error("Error connecting to GitHub:", error);
+    }
   };
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TextInput from "../components/atoms/textInput";
-import { useAuth } from "../hooks/auth.hook";
 import LoginRequest from "../api/auth";
+import { useUserStore } from "@/store/userStore";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login } = useUserStore();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
