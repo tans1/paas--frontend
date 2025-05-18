@@ -8,7 +8,8 @@ interface TextInputProps {
   error?: string;
   placeholder?: string;
   togglePasswordVisibility?: () => void;
-  name: string; // Added name prop
+  name: string;
+  "data-testid"?: string;
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -19,7 +20,8 @@ const TextInput: React.FC<TextInputProps> = ({
   error,
   placeholder,
   togglePasswordVisibility,
-  name, // Destructure the name prop
+  name,
+  "data-testid": testId
 }) => (
   <div className="relative">
     <label className="block text-sm font-medium text-gray-700">{label}</label>
@@ -33,6 +35,7 @@ const TextInput: React.FC<TextInputProps> = ({
         className={`block w-full rounded-md border ${error ? "border-red-500" : "border-gray-300"
           } shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-3 ${togglePasswordVisibility ? "pr-12" : ""
           }`}
+        data-testid={testId}
       />
       {togglePasswordVisibility && (
         <button
