@@ -8,10 +8,13 @@ import Layout from "./components/templates/layout";
 import Home from "./pages/home";
 import Register from "./pages/register";
 import Login from "./pages/login";
-import LoginSuccess from "./pages/login-success";
+import LoginSuccess from "./pages/loginSuccess";
+import LoginFailure from "./pages/loginFailure";
+import IntegrationSuccess from "./pages/integrationSuccess";
+import IntegrationFailure from "./pages/integrationFailure";
 import ProtectedRoute from "./routes/protected.routes";
 import DashboardStructure from "./components/templates/dashboardStructure";
-import Settings from "./pages/settings"
+import Settings from "./pages/settings";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
 
           <Route path="login" element={<Login />} />
           <Route path="login-success" element={<LoginSuccess />} />
+          <Route path="login-failure" element={<LoginFailure />} />
+          <Route path="integration-success" element={<IntegrationSuccess />} />
+          <Route path="integration-failure" element={<IntegrationFailure />} />
           <Route path="register" element={<Register />} />
 
           <Route
@@ -40,7 +46,8 @@ function App() {
               <ProtectedRoute>
                 <Settings />
               </ProtectedRoute>
-            } />
+            }
+          />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
