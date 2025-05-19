@@ -94,11 +94,16 @@ export default function ProjectDetail() {
 
     console.log("Setting up WebSocket connection:", { repoId, branch });
     const parsedRepoId = parseInt(repoId, 10);
+
+    // Close any existing deployment socket before creating a new one
+    if (sockets.deployment) {
+      sockets.deployment.close();
+    }
+
     createWebSocketConnection(parsedRepoId, branch, "deployment");
 
     return () => {
       console.log("Cleaning up WebSocket connection");
-      // Cleanup socket on component unmount
       if (sockets.deployment) {
         sockets.deployment.close();
       }
@@ -261,6 +266,40 @@ export default function ProjectDetail() {
   return (
     <div className="mt-10 pl-10 pr-40">
       <PagesTitle title={fetchedProject?.name || ""} subtitle="Details" />
+
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          {fetchedProject?.status === "RUNNING" && (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-700 rounded-full">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Running</span>
+            </div>
+          )}
+          {fetchedProject?.status === "STOPPED" && (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-red-100 text-red-700 rounded-full">
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+              <span className="text-sm font-medium">Stopped</span>
+            </div>
+          )}
+          {fetchedProject?.status === "PENDING" && (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Pending</span>
+            </div>
+          )}
+        </div>
+        {fetchedProject?.deployedUrl && (
+          <a
+            href={fetchedProject.deployedUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+          >
+            <i className="fa-solid fa-external-link-alt"></i>
+            View Live Site
+          </a>
+        )}
+      </div>
 
       <div className="flex justify-between items-start mt-10">
         <div className="max-w-2xl">
