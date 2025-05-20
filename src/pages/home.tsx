@@ -7,11 +7,12 @@ import Hosting from "@/components/molecules/hosting";
 import Info from "@/components/molecules/info";
 import Intro from "@/components/molecules/intro";
 import Prices from "@/components/molecules/prices";
-
+import Chatbot from "../components/Chatbot";
 function Home() {
   return (
     <div>
       <Header />
+      <Chatbot />
       <Intro />
       <Prices />
       <Info />
