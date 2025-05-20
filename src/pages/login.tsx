@@ -32,7 +32,7 @@ const Login = () => {
       }
     }
     return error;
-  };
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -80,14 +80,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-4">Sign In</h2>
-        <p className="text-center text-gray-600 mb-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100" data-testid="login-container" >
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md" data-testid="login-card">
+        <h2 className="text-3xl font-bold text-center mb-4" data-testid="login-title">Sign In</h2>
+        <p className="text-center text-gray-600 mb-8" data-testid="login-subtitle">
           Enter your email and password to sign in.
         </p>
 
-        <form className="space-y-6" onSubmit={handleFormSubmit}>
+        <form className="space-y-6" onSubmit={handleFormSubmit} data-testid="login-form">
           <TextInput
             label="Your email"
             type="email"
@@ -96,6 +96,7 @@ const Login = () => {
             error={errors.email}
             placeholder="name@mail.com"
             name="email"
+            data-testid="login-email"
           />
 
           <TextInput
@@ -107,15 +108,17 @@ const Login = () => {
             placeholder="********"
             togglePasswordVisibility={() => setShowPassword((prev) => !prev)}
             name="password"
+            data-testid="login-password"
           />
 
           <button
             type="submit"
             className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid
-                ? "bg-black hover:bg-gray-800"
-                : "bg-gray-400 cursor-not-allowed"
+              ? "bg-black hover:bg-gray-800"
+              : "bg-gray-400 cursor-not-allowed"
               }`}
-            disabled={!isFormValid || isLoading}>
+            disabled={!isFormValid || isLoading}
+            data-testid="login-submit-button">
             {isLoading ? "Signing In..." : "Sign In"}
           </button>
 
@@ -125,23 +128,25 @@ const Login = () => {
                 type="checkbox"
                 id="newsletter"
                 className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                data-testid="login-newsletter-checkbox"
               />
               <label
                 htmlFor="newsletter"
-                className="ml-2 text-sm text-gray-700">
+                className="ml-2 text-sm text-gray-700"
+                data-testid="login-newsletter-label">
                 Subscribe me to newsletter
               </label>
             </div>
-            <a href="#" className="text-sm text-indigo-600 hover:underline">
+            <a href="#" className="text-sm text-indigo-600 hover:underline" data-testid="login-forgot-password">
               Forgot Password?
             </a>
           </div>
         </form>
 
-        <div className="mt-6">
+        <div className="mt-6" data-testid="login-social">
           <a
             href={`${import.meta.env.VITE_BACK_END_URL}/oauth/google`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300">
+            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300" data-testid="login-google">
             <img
               src="https://img.icons8.com/color/24/000000/google-logo.png"
               alt="Google"
@@ -152,7 +157,7 @@ const Login = () => {
 
           <a
             href={`${import.meta.env.VITE_BACK_END_URL}/oauth/github`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300">
+            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300" data-testid="login-github">
             <img
               src="https://img.icons8.com/ios-glyphs/30/000000/github.png"
               alt="GitHub"
@@ -162,17 +167,17 @@ const Login = () => {
           </a>
         </div>
 
-        <p className="mt-6 text-center text-gray-600">
+        <p className="mt-6 text-center text-gray-600" data-testid="login-register-prompt">
           Not registered?{" "}
           <span
             onClick={handleRedirectToRegister}
-            className="text-indigo-600 hover:underline cursor-pointer">
+            className="text-indigo-600 hover:underline cursor-pointer" data-testid="login-register-link">
             Create account
           </span>
         </p>
 
         {loginError && (
-          <p className="text-red-500 text-center mt-4">{loginError}</p>
+          <p className="text-red-500 text-center mt-4" data-testid="login-error-message">{loginError}</p>
         )}
       </div>
     </div>

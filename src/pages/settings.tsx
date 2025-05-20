@@ -25,17 +25,17 @@ const Settings = () => {
       <AppSidebar />
       <main className="w-full">
         <Navbar />
-        <div className="max-w-4xl mx-auto p-6 space-y-10">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-2">General Settings</h2>
+        <div className="max-w-4xl mx-auto p-6 space-y-10" data-testid="settings-container">
+          <div className="bg-white rounded-lg shadow p-6" data-testid="settings-card">
+            <h2 className="text-2xl font-bold mb-2" data-testid="settings-title">General Settings</h2>
             <p className="text-sm text-gray-500 mb-6">
               Your current Primary email address is{" "}
-              <span className="text-blue-600">dashprops@example.com</span>
+              <span className="text-blue-600" data-testid="email-text">dashprops@example.com</span>
             </p>
 
-            <h2 className="text-2xl font-bold mb-6">Change your password</h2>
+            <h2 className="text-2xl font-bold mb-6" data-testid="change-password-title">Change your password</h2>
 
-            <form onSubmit={handlePasswordChange} className="space-y-6">
+            <form onSubmit={handlePasswordChange} className="space-y-6" ta-testid="change-password-form">
               <TextInput
                 label="Current password"
                 type={showPassword.current ? "text" : "password"}
@@ -45,6 +45,7 @@ const Settings = () => {
                 placeholder="********"
                 togglePasswordVisibility={() => togglePasswordVisibility("current")}
                 name="currentPassword"
+                data-testid="current-password"
               />
 
               <TextInput
@@ -56,6 +57,7 @@ const Settings = () => {
                 placeholder="********"
                 togglePasswordVisibility={() => togglePasswordVisibility("new")}
                 name="newPassword"
+                data-testid="new-password"
               />
 
               <TextInput
@@ -67,9 +69,10 @@ const Settings = () => {
                 placeholder="********"
                 togglePasswordVisibility={() => togglePasswordVisibility("confirm")}
                 name="confirmPassword"
+                data-testid="confirm-password"
               />
 
-              <div className="text-sm text-gray-500 mt-2 space-y-1">
+              <div className="text-sm text-gray-500 mt-2 space-y-1" data-testid="password-requirements">
                 <p className="font-semibold">Password requirements:</p>
                 <ul className="list-disc list-inside">
                   <li>Minimum 8 characters long</li>
@@ -85,6 +88,7 @@ const Settings = () => {
                 disabled={!isFormValid || isLoading}
                 className={`mt-4 w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
                   }`}
+                data-testid="submit-button"
               >
                 {isLoading ? "Saving..." : "Save Changes"}
               </button>
@@ -99,7 +103,7 @@ const Settings = () => {
           </div>
         </div>
       </main>
-    </SidebarProvider>
+    </SidebarProvider >
   );
 };
 
