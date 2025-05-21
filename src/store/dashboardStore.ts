@@ -55,7 +55,7 @@ interface Project {
   createdAt: string;
   deployedIp?: string;
   deployedPort?: number;
-  deployedUrl: string;
+  deployedUrl: string[];
   deployments?: Deployment[];
   status: "STOPPED" | "RUNNING" | "PENDING";
   lastCommitMessage?: string;
@@ -127,6 +127,7 @@ interface DashboardState {
   stopProject: (projectId: number) => Promise<void>;
   deleteProject: (projectId: number) => Promise<void>;
   rollbackProject: (projectId: number, deploymentId: number) => Promise<void>;
+  addDomain: (domain: string, projectId: number) => Promise<void>;
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -349,6 +350,26 @@ export const useDashboardStore = create<DashboardState>()(
         } catch (error: any) {
           console.error("Error rolling back project:", error.message);
           set({ error: error.message });
+        }
+      },
+
+      addDomain: async (domain: string, projectId: number) => {
+        set({ loading: true, error: null });
+        try {
+          await api.post("/dns", { domain, projectId });
+          // Refresh project data after adding domain
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            await get().fetchProject(
+              currentProject.branch,
+              currentProject.repoId
+            );
+          }
+        } catch (error: any) {
+          console.error("Error adding domain:", error.message);
+          set({ error: error.message });
+        } finally {
+          set({ loading: false });
         }
       },
 

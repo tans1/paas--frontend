@@ -67,6 +67,7 @@ export default function ProjectDetail() {
     stopProject,
     deleteProject,
     rollbackProject,
+    addDomain,
   } = useDashboardStore();
 
   // Initial project fetch
@@ -183,7 +184,15 @@ export default function ProjectDetail() {
     }
   };
 
-  const handleAddDomainName = () => {};
+  const handleAddDomainName = async () => {
+    if (!fetchedProject || !newDomainName) return;
+    try {
+      await addDomain(newDomainName, fetchedProject.id);
+      setNewDomainName("");
+    } catch {
+      alert("Failed to add domain. Please try again.");
+    }
+  };
 
   const [editMode, setEditMode] = useState(false);
   const [originalEnvVars, setOriginalEnvVars] = useState<EnvVar[]>([]);
@@ -288,17 +297,20 @@ export default function ProjectDetail() {
             </div>
           )}
         </div>
-        {fetchedProject?.deployedUrl && (
-          <a
-            href={fetchedProject.deployedUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-          >
-            <i className="fa-solid fa-external-link-alt"></i>
-            View Live Site
-          </a>
-        )}
+        {Array.isArray(fetchedProject?.deployedUrl) &&
+          fetchedProject.deployedUrl.length > 0 && (
+            <a
+              href={normalizeUrl(fetchedProject.deployedUrl[0], {
+                defaultProtocol: "https",
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            >
+              <i className="fa-solid fa-external-link-alt"></i>
+              View Live Site
+            </a>
+          )}
       </div>
 
       <div className="flex justify-between items-start mt-10">
@@ -495,25 +507,24 @@ export default function ProjectDetail() {
             <li className="mb-5">
               <p className="text-gray-500">Domains</p>
               <div className="grid gap-1">
-                <div>
-                  <a
-                    href={
-                      fetchedProject?.deployedUrl
-                        ? normalizeUrl(fetchedProject?.deployedUrl, {
-                            defaultProtocol: "https",
-                          })
-                        : ""
-                    }
-                    target="_blank"
-                    className="text-blue-600"
-                  >
-                    {fetchedProject?.deployedUrl
-                      ? normalizeUrl(fetchedProject?.deployedUrl, {
+                {Array.isArray(fetchedProject?.deployedUrl) &&
+                fetchedProject.deployedUrl.length > 0 ? (
+                  fetchedProject.deployedUrl.map((domain, idx) => (
+                    <div key={idx}>
+                      <a
+                        href={normalizeUrl(domain, {
                           defaultProtocol: "https",
-                        })
-                      : ""}
-                  </a>
-                </div>
+                        })}
+                        target="_blank"
+                        className="text-blue-600"
+                      >
+                        {normalizeUrl(domain, { defaultProtocol: "https" })}
+                      </a>
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-gray-400">No domains found</span>
+                )}
               </div>
             </li>
             <li className="mb-5">
