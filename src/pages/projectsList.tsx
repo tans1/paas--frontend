@@ -29,11 +29,11 @@ export default function ProjectsList() {
   }, [projects, searchTerm]);
 
   return (
-    <div className="mt-10 pl-10 pr-40">
+    <div className="mt-10 pl-10 pr-40" data-testid="project-list-page">
       <PagesTitle title="All Projects" subtitle="Dashboard" />
 
-      <div className="flex items-center justify-between bg-white rounded-md mt-10 mb-10">
-        <div className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 w-full max-w-md ">
+      <div className="flex items-center justify-between bg-white rounded-md mt-10 mb-10" data-testid="search-and-add-container">
+        <div className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 w-full max-w-md " data-testid="search-container">
           <i className="fa-solid fa-magnifying-glass text-gray-500"></i>
           <input
             type="text"
@@ -41,18 +41,20 @@ export default function ProjectsList() {
             className="outline-none w-full text-sm text-gray-700"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            data-testid="project-search-input"
           />
         </div>
 
         <button
           className="ml-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition cursor-pointer"
           onClick={handleAddProject}
+          data-testid="add-project-button"
         >
           + Add Project
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="project-cards-grid">
         {filteredProjects.map((project, index) => (
           <ProjectCard
             key={index}
@@ -62,6 +64,7 @@ export default function ProjectsList() {
             branch={project.branch}
             projectDescription={project.projectDescription}
             githubUrl={project.url}
+            data-testid={`project-card-${index}`}
           />
         ))}
       </div>

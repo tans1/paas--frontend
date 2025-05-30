@@ -63,7 +63,9 @@ const AppSidebar: React.FC = () => {
                     className="hover:bg-sidebar-hover hover:text-white hover:cursor-pointer">
                     <p onClick={() => handleNavigation(item.url)}>
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span data-testid={`sidebar-link-${item.title.toLowerCase().replace(/\s/g, "-")}`}>
+                        {item.title}
+                      </span>
                     </p>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

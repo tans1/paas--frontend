@@ -48,12 +48,12 @@ export default function ActiveProjectsListItem({
       <TableCell
         className="font-bold flex items-center pr-40 hover:cursor-pointer"
         onClick={handleDetails}>
-        <img
+        {projectName && (<><img
           src={frameworksImageMap[framework]}
           alt={framework}
           className="w-15 h-10 rounded-full mr-2"
         />
-        {projectName}
+          <p>{projectName}</p></>)}
       </TableCell>
       <TableCell
         className=" pr-40 hover:cursor-pointer"
@@ -61,21 +61,21 @@ export default function ActiveProjectsListItem({
         {dateFormat(lastDeploymentDate, "dddd, mmmm dS, yyyy, h:MM TT")}
       </TableCell>
       <TableCell className="">
-        <a
+        {deployedUrl && (<a
           href={normalizeUrl(deployedUrl)}
           className="text-blue-600"
           target="_blank">
           {deployedUrl}
-        </a>
+        </a>)}
       </TableCell>
 
       <TableCell className="">
-        <a
+        {githublink && (<a
           href={normalizeUrl(githublink)}
           className="text-blue-600"
           target="_blank">
           {githublink}
-        </a>
+        </a>)}
       </TableCell>
     </TableRow>
   );

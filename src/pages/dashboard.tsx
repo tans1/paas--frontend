@@ -71,7 +71,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="">
+    <div className="" data-testid="dashboard-page">
       <div className=" bg-[#0057D9] pt-10  h-52 flex flex-col justify-between gap-10">
         <div className="flex justify-between items-center px-10">
           <div className="text-3xl font-bold text-white">Dashboard</div>
@@ -79,6 +79,7 @@ const Dashboard = () => {
             {!user?.githubUsername && (
               <button
                 onClick={handleGithubConnect}
+                data-testid="connect-github-button"
                 className="flex items-center gap-2 bg-[#24292F] text-white px-6 py-2 rounded-md hover:bg-[#1B1F23] transition-colors shadow-sm"
               >
                 <Github className="w-5 h-5" />
@@ -88,6 +89,7 @@ const Dashboard = () => {
             <button
               className="text-black font-semibold bg-white px-10 py-2 rounded cursor-pointer shadow-sm"
               onClick={handleProjectClick}
+              data-testid="all-projects-button"
             >
               All Projects
             </button>
@@ -96,42 +98,42 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-3 pl-5">
           <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between">
-            <div className="flex justify-between">
+            <div className="flex justify-between" data-testid="summary-card-projects">
               <div className="text-xl font-semibold"> Projects</div>
               <div>
                 <FolderDot />
               </div>
             </div>
-            <div className="text-5xl font-semibold">{projects.length}</div>
+            <div className="text-5xl font-semibold" data-testid="projects-count">{projects.length}</div>
           </div>
 
-          <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between">
+          <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between" data-testid="summary-card-active-projects">
             <div className="flex justify-between">
               <div className="text-xl font-semibold">Active Projects</div>
               <div>
                 <FolderDot className="text-blue-400" />
               </div>
             </div>
-            <div className="text-5xl font-semibold">{projects.length}</div>
+            <div className="text-5xl font-semibold" data-testid="active-projects-count">{projects.length}</div>
           </div>
 
-          <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between">
+          <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between" data-testid="summary-card-max-cpu">
             <div className="flex justify-between">
               <div className="text-xl font-semibold">Max CPU </div>
               <div>
                 <Cpu className="text-green-500" />
               </div>
             </div>
-            <div className="text-5xl font-semibold">76%</div>
+            <div className="text-5xl font-semibold" data-testid="max-cpu-value">76%</div>
           </div>
         </div>
       </div>
 
       <div className="mt-30 px-10">
-        <div className="flex justify-between bg-white shadow-sm rounded py-5 px-5 mb-5">
-          <div className="font-semibold">Active Projects</div>
+        <div className="flex justify-between bg-white shadow-sm rounded py-5 px-5 mb-5" data-testid="active-projects-section">
+          <div className="font-semibold" data-testid="active-projects-heading">Active Projects</div>
         </div>
-        <Table className="">
+        <Table data-testid="projects-table">
           <TableHeader>
             <TableRow>
               <TableHead className="">Name</TableHead>

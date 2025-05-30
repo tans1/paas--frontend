@@ -45,12 +45,12 @@ export default function AddProject() {
 
   if (!user?.githubUsername) {
     return (
-      <div className="w-full mt-10 pl-10 pr-40">
+      <div className="w-full mt-10 pl-10 pr-40" data-testid="add-project-page" >
         <PagesTitle title="Add Project" subtitle="Repositories" />
-        <div className="mt-6 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div className="mt-6 p-6 bg-yellow-50 border border-yellow-200 rounded-lg" data-testid="github-warning">
           <div className="flex items-center gap-3">
-            <i className="fa-solid fa-triangle-exclamation text-yellow-500 text-xl"></i>
-            <div>
+            <i className="fa-solid fa-triangle-exclamation text-yellow-500 text-xl" data-testid="warning-icon"></i>
+            <div data-testid="warning-text">
               <h3 className="text-lg font-medium text-yellow-800">
                 GitHub Account Required
               </h3>
@@ -66,40 +66,41 @@ export default function AddProject() {
   }
 
   return (
-    <div className="w-full mt-10 pl-10 pr-40">
+    <div className="w-full mt-10 pl-10 pr-40" data-testid="add-project-page" >
       <PagesTitle title="Add Project" subtitle="Repositories" />
 
-      <div className="flex items-center justify-between bg-white rounded-md mt-10 mb-10">
+      <div className="flex items-center justify-between bg-white rounded-md mt-10 mb-10" data-testid="search-container">
         <div className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 w-full max-w-md ">
-          <i className="fa-solid fa-magnifying-glass text-gray-500"></i>
+          <i className="fa-solid fa-magnifying-glass text-gray-500" data-testid="search-icon"></i>
           <input
             type="text"
             placeholder="Search repository..."
             className="outline-none w-full text-sm text-gray-700"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            data-testid="search-input"
           />
         </div>
       </div>
       {loading || showLoader ? (
-        <div className="w-full h-[40vh] flex justify-center items-center ">
+        <div className="w-full h-[40vh] flex justify-center items-center " data-testid="loading-spinner">
           <div className="w-[10%] h-full m-auto flex flex-col justify-center">
             <Lottie animationData={loadingAnimation} loop={true} />
           </div>
         </div>
       ) : (
-        <div>
-          <Table>
+        <div data-testid="repository-table">
+          <Table data-testid="repository-table-inner">
             <TableHeader>
               <TableRow className="hover:cursor-default hover:bg-white">
-                <TableHead className="">Repo Name</TableHead>
-                <TableHead className="">Default branch</TableHead>
-                <TableHead className="">Language</TableHead>
-                <TableHead className="">Created at</TableHead>
+                <TableHead className="" data-testid="column-name">Repo Name</TableHead>
+                <TableHead className="" data-testid="column-branch">Default branch</TableHead>
+                <TableHead className="" data-testid="column-language">Language</TableHead>
+                <TableHead className="" data-testid="column-created">Created at</TableHead>
               </TableRow>
             </TableHeader>
 
-            <TableBody>
+            <TableBody data-testid="repository-list">
               {filteredRepos.map((repository, index) => (
                 <UserRepositoryListItem
                   key={index}
@@ -111,6 +112,7 @@ export default function AddProject() {
                   description={repository.description}
                   html_url={repository.html_url}
                   branches={repository.branches}
+                  data-testid={`repository-${repository.id}`}
                 />
               ))}
             </TableBody>

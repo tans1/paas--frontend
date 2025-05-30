@@ -29,7 +29,7 @@ const TextInput: React.FC<TextInputProps> = ({
     <div className="relative mt-1">
       <input
         type={type}
-        name={name} // Added name attribute
+        name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}

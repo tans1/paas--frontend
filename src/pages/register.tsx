@@ -96,7 +96,7 @@ const Register = () => {
     } catch (error: any) {
       setRegisterError(
         error.response?.data?.message ||
-          "Registration failed. Please try again."
+        "Registration failed. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -117,13 +117,13 @@ const Register = () => {
     termsChecked;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" data-testid="register-page">
       <Header />
       <div className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md mx-auto">
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-3xl font-bold text-gray-900" data-testid="register-header">
                 Create Account
               </h2>
               <p className="mt-2 text-sm text-gray-600">
@@ -131,115 +131,7 @@ const Register = () => {
               </p>
             </div>
 
-<<<<<<< HEAD
-        <form
-          className="space-y-4"
-          onSubmit={handleFormSubmit}
-          data-testid="register-form"
-        >
-          <TextInput
-            label="Your name"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            error={errors.name}
-            placeholder="Your name"
-            data-testid="input-name"
-          />
-          <TextInput
-            label="Your email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={errors.email}
-            placeholder="name@mail.com"
-            data-testid="input-email"
-          />
-          <TextInput
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={errors.password}
-            placeholder="********"
-            togglePasswordVisibility={() => setShowPassword((prev) => !prev)}
-            data-testid="input-password"
-          />
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={termsChecked}
-              onChange={handleTermsChange}
-              className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-              data-testid="checkbox-terms"
-            />
-            <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-              I agree to the{" "}
-              <a href="#" className="text-indigo-600">
-                Terms and Conditions
-              </a>
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            className={`w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid
-              ? "bg-black hover:bg-gray-800"
-              : "bg-gray-400 cursor-not-allowed"
-              }`}
-            disabled={!isFormValid}
-            data-testid="submit-button"
-          >
-            Register Now
-          </button>
-        </form>
-
-        {/* Social Login Buttons */}
-        <div className="mt-6">
-          <a
-            href={`${import.meta.env.VITE_BACK_END_URL}/oauth/google`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition duration-300"
-            data-testid="oauth-google"
-          >
-            <img
-              src="https://img.icons8.com/color/24/000000/google-logo.png"
-              alt="Google"
-              className="mr-2"
-            />
-            Sign in with Google
-          </a>
-
-          <a
-            href={`${import.meta.env.VITE_BACK_END_URL}/oauth/github`}
-            className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md mt-2 hover:bg-gray-100 transition duration-300"
-            data-testid="oauth-github"
-          >
-            <img
-              src="https://img.icons8.com/ios-glyphs/30/000000/github.png"
-              alt="GitHub"
-              className="mr-2"
-            />
-            Sign in with GitHub
-          </a>
-        </div>
-
-        <p className="mt-6 text-center text-gray-600">
-          Already have an account?{" "}
-          <span
-            onClick={handleRedirectToSignIn}
-            className="text-indigo-600 hover:underline cursor-pointer"
-            data-testid="link-login"
-          >
-            Sign in
-          </span>
-        </p>
-=======
-            <form className="space-y-6" onSubmit={handleFormSubmit}>
+            <form className="space-y-6" onSubmit={handleFormSubmit} data-testid="register-form">
               <TextInput
                 label="Full name"
                 type="text"
@@ -248,6 +140,7 @@ const Register = () => {
                 onChange={handleChange}
                 error={errors.name}
                 placeholder="John Doe"
+                data-testid="name-input"
               />
               <TextInput
                 label="Email address"
@@ -257,6 +150,7 @@ const Register = () => {
                 onChange={handleChange}
                 error={errors.email}
                 placeholder="name@mail.com"
+                data-testid="email-input"
               />
               <TextInput
                 label="Password"
@@ -269,6 +163,7 @@ const Register = () => {
                 togglePasswordVisibility={() =>
                   setShowPassword((prev) => !prev)
                 }
+                data-testid="password-input"
               />
 
               <div className="flex items-center">
@@ -278,6 +173,7 @@ const Register = () => {
                   checked={termsChecked}
                   onChange={handleTermsChange}
                   className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  data-testid="terms-checkbox"
                 />
                 <label
                   htmlFor="terms"
@@ -292,12 +188,12 @@ const Register = () => {
 
               <button
                 type="submit"
-                className={`w-full text-white font-medium py-2.5 px-4 rounded-md transition duration-300 ${
-                  isFormValid
-                    ? "bg-indigo-600 hover:bg-indigo-700"
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
+                className={`w-full text-white font-medium py-2.5 px-4 rounded-md transition duration-300 ${isFormValid
+                  ? "bg-indigo-600 hover:bg-indigo-700"
+                  : "bg-gray-400 cursor-not-allowed"
+                  }`}
                 disabled={!isFormValid || isLoading}
+                data-testid="submit-button"
               >
                 {isLoading ? "Creating account..." : "Create account"}
               </button>
@@ -319,6 +215,7 @@ const Register = () => {
                 <a
                   href={`${import.meta.env.VITE_BACK_END_URL}/oauth/google`}
                   className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                  data-testid="oauth-google"
                 >
                   <img
                     src="https://img.icons8.com/color/24/000000/google-logo.png"
@@ -331,6 +228,7 @@ const Register = () => {
                 <a
                   href={`${import.meta.env.VITE_BACK_END_URL}/oauth/github`}
                   className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                  data-testid="oauth-github"
                 >
                   <img
                     src="https://img.icons8.com/ios-glyphs/30/000000/github.png"
@@ -347,19 +245,22 @@ const Register = () => {
               <button
                 onClick={handleRedirectToSignIn}
                 className="font-medium text-indigo-600 hover:text-indigo-500"
+                data-testid="redirect-login"
               >
                 Sign in
               </button>
             </p>
 
             {registerError && (
-              <p className="mt-4 text-sm text-red-600 text-center">
+              <p
+                className="mt-4 text-sm text-red-600 text-center"
+                data-testid="error-message"
+              >
                 {registerError}
               </p>
             )}
           </div>
         </div>
->>>>>>> main
       </div>
     </div>
   );

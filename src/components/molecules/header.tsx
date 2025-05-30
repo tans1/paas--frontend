@@ -36,25 +36,26 @@ const Header = () => {
             <Link
               to="/"
               className="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-            >
+              data-testid="header-home-link">
               Home
             </Link>
             <a
               href="/#pricing"
               className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
+              data-testid="header-pricing-link"
             >
               Pricing
             </a>
             <a
               href="/#features"
               className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-            >
+              data-testid="header-features-link">
               Features
             </a>
             <a
               href="/#contact"
               className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-            >
+              data-testid="header-contact-link">
               Contact
             </a>
             {user ? (
@@ -62,13 +63,13 @@ const Header = () => {
                 <Link
                   to="/dashboard/"
                   className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-                >
+                  data-testid="header-dashboard-link">
                   Dashboard
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="hover:text-indigo-600 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700"
-                >
+                  data-testid="header-logout-link">
                   Logout
                 </button>
               </>
@@ -77,13 +78,13 @@ const Header = () => {
                 <Link
                   to="/login"
                   className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-                >
+                  data-testid="header-login-link">
                   Login
                 </Link>
                 <Link
                   to="/register"
                   className="hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-                >
+                  data-testid="header-signup-link">
                   Sign up
                 </Link>
               </>
@@ -91,7 +92,7 @@ const Header = () => {
           </div>
           <div className="md:hidden flex items-center mr-5">
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger data-testid="mobile-menu-toggle">
                 <i>
                   <MenuSquareIcon />
                 </i>
@@ -101,7 +102,7 @@ const Header = () => {
                   <Link
                     to="/"
                     className="hover:text-indigo-600 px-3 text-sm font-medium"
-                  >
+                    data-testid="mobile-header-home-link">
                     Home
                   </Link>
                 </DropdownMenuLabel>
@@ -109,7 +110,7 @@ const Header = () => {
                   <a
                     href="/#pricing"
                     className="hover:text-indigo-600 px-3 text-sm font-medium"
-                  >
+                    data-testid="mobile-header-pricing-link">
                     Pricing
                   </a>
                 </DropdownMenuItem>
@@ -117,7 +118,7 @@ const Header = () => {
                   <a
                     href="/#features"
                     className="hover:text-indigo-600 px-3 text-sm font-medium"
-                  >
+                    data-testid="mobile-header-features-link">
                     Features
                   </a>
                 </DropdownMenuItem>
@@ -125,7 +126,7 @@ const Header = () => {
                   <a
                     href="/#contact"
                     className="hover:text-indigo-600 px-3 text-sm font-medium"
-                  >
+                    data-testid="mobile-header-contact-link">
                     Contact
                   </a>
                 </DropdownMenuLabel>
@@ -136,14 +137,14 @@ const Header = () => {
                       <Link
                         to="/dashboard/projects"
                         className="hover:text-indigo-600 px-3 text-sm font-medium"
-                      >
+                        data-testid="mobile-header-dashboard-link">
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={handleLogout}
                       className="text-red-600 hover:text-red-700"
-                    >
+                      data-testid="mobile-header-logout-link">
                       Logout
                     </DropdownMenuItem>
                   </>
@@ -153,7 +154,7 @@ const Header = () => {
                       <Link
                         to="/login"
                         className="hover:text-indigo-600 px-3 text-sm font-medium"
-                      >
+                        data-testid="mobile-header-login-link">
                         Login
                       </Link>
                     </DropdownMenuItem>
@@ -161,7 +162,7 @@ const Header = () => {
                       <Link
                         to="/register"
                         className="hover:text-indigo-600 px-3 text-sm font-medium"
-                      >
+                        data-testid="mobile-header-signup-link">
                         Sign up
                       </Link>
                     </DropdownMenuItem>

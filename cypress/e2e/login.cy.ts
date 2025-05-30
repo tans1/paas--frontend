@@ -1,83 +1,143 @@
 describe("Login Page", () => {
-  const backendUrl =
-    Cypress.env("VITE_BACK_END_URL") || "http://localhost:8000";
+  const backendUrl = "http://localhost:3000";
 
   beforeEach(() => {
     cy.visit("/login");
   });
 
   it("renders the login form", () => {
-    cy.get("[data-testid='login-form']").should("exist");
-    cy.get("[data-testid='input-email']").should("exist");
-    cy.get("[data-testid='input-password']").should("exist");
-    cy.get("[data-testid='submit-button']").should("exist");
+    cy.get('[data-testid="login-heading"]').should("contain", "Welcome Back");
+    cy.get('[data-testid="email-input"]').should("exist");
+    cy.get('[data-testid="password-input"]').should("exist");
+    cy.get('[data-testid="submit-button"]').should("exist");
   });
 
-  it("shows validation errors for invalid input", () => {
-    cy.get("[data-testid='input-email']").type("invalid-email");
-    cy.get("[data-testid='input-password']").type("123");
-
-    cy.get("[data-testid='submit-button']").click();
-
-    cy.get("[data-testid='input-email-error']")
-      .should("contain", "Invalid email format");
-
-    cy.get("[data-testid='input-password-error']")
-      .should("contain", "Password must be at least 8 characters");
+  it("shows error for invalid email format", () => {
+    cy.get('[data-testid="email-input"]').type("invalid-email");
+    cy.get('[data-testid="email-input"]')
+      .parent()
+      .parent()
+      .find("p")
+      .should("contain", "Invalid email format.");
   });
 
-  it("submits form with valid credentials and redirects", () => {
-    // Stub the login API response
-    cy.intercept("POST", "/api/auth/login", {
+  it("shows error for invalid password format", () => {
+    cy.get('[data-testid="password-input"]').type("weak");
+    cy.get('[data-testid="password-input"]')
+      .parent()
+      .parent()
+      .find("p")
+      .should(
+        "contain",
+        "Password must be at least 8 characters long, with at least 1 uppercase letter, 1 lowercase letter, and 1 symbol."
+      );
+  });
+
+  it("toggles password visibility", () => {
+    cy.get('[data-testid="password-input"]').should(
+      "have.attr",
+      "type",
+      "password"
+    );
+    cy.get('[data-testid="password-input"]')
+      .parent()
+      .parent()
+      .find("button")
+      .click();
+    cy.get('[data-testid="password-input"]').should(
+      "have.attr",
+      "type",
+      "text"
+    );
+  });
+
+  it("disables submit button with invalid email", () => {
+    cy.get('[data-testid="email-input"]').type("invalid-email");
+    cy.get('[data-testid="password-input"]').type("Strong@123");
+    cy.get('[data-testid="checkbox-remember"]').check();
+    cy.get('[data-testid="submit-button"]').should("be.disabled");
+  });
+
+  it("disables submit button with invalid password", () => {
+    cy.get('[data-testid="email-input"]').type("test@example.com");
+    cy.get('[data-testid="password-input"]').type("weak");
+    cy.get('[data-testid="checkbox-remember"]').check();
+    cy.get('[data-testid="submit-button"]').should("be.disabled");
+  });
+
+  it("enables submit button when form is valid", () => {
+    cy.get('[data-testid="email-input"]').type("test@example.com");
+    cy.get('[data-testid="password-input"]').type("Strong@123");
+    cy.get('[data-testid="checkbox-remember"]').check();
+    cy.get('[data-testid="submit-button"]').should("not.be.disabled");
+  });
+
+  it("redirects to /register on clicking sign up link", () => {
+    cy.get('[data-testid="link-register"]').click();
+    cy.url().should("include", "/register");
+  });
+
+  it("redirects to Google OAuth when Google button clicked", () => {
+    cy.get('[data-testid="oauth-google"]')
+      .should("have.attr", "href")
+      .and("include", "/oauth/google");
+  });
+
+  it("redirects to GitHub OAuth when GitHub button clicked", () => {
+    cy.get('[data-testid="oauth-github"]')
+      .should("have.attr", "href")
+      .and("include", "/oauth/github");
+  });
+
+  it("shows loading state during login attempt", () => {
+    cy.intercept("POST", `${backendUrl}/auth/login`, {
+      delay: 1000,
+      statusCode: 200,
+      body: { access_token: "fake-token" },
+    }).as("loginRequest");
+
+    cy.get('[data-testid="email-input"]').type("test@example.com");
+    cy.get('[data-testid="password-input"]').type("Strong@123");
+    cy.get('[data-testid="submit-button"]').click();
+
+    cy.get('[data-testid="submit-button"]').should("contain", "Signing in...");
+    cy.get('[data-testid="submit-button"]').should("be.disabled");
+  });
+
+  it("handles network error gracefully", () => {
+    cy.intercept("POST", `${backendUrl}/auth/login`, {
+      forceNetworkError: true,
+    }).as("loginRequest");
+
+    cy.get('[data-testid="email-input"]').type("test@example.com");
+    cy.get('[data-testid="password-input"]').type("Strong@123");
+    cy.get('[data-testid="submit-button"]').click();
+
+    cy.get('[data-testid="login-error"]').should(
+      "contain",
+      "Login failed, please try again."
+    );
+  });
+
+  it("redirects to dashboard after successful login", () => {
+    cy.intercept("POST", `${backendUrl}/auth/login`, {
       statusCode: 200,
       body: {
-        access_token: "mocked_token",
+        access_token: "fake-access-token",
       },
     }).as("loginRequest");
 
-    cy.get("[data-testid='input-email']").type("test@example.com");
-    cy.get("[data-testid='input-password']").type("Password123!");
+    cy.get('[data-testid="email-input"]').type("yaredbtgs@gmail.com");
+    cy.get('[data-testid="password-input"]').type("@Yared123");
+    cy.get('[data-testid="submit-button"]').click();
 
-    cy.get("[data-testid='submit-button']").click();
-
-    cy.wait("@loginRequest").its("request.body").should("deep.equal", {
-      email: "test@example.com",
-      password: "Password123!",
+    cy.wait("@loginRequest").then((interception) => {
+      expect(interception.request.body).to.include({
+        email: "yaredbtgs@gmail.com",
+        password: "@Yared123",
+      });
     });
 
     cy.url().should("include", "/dashboard");
   });
-
-  it("shows an error message on failed login", () => {
-    cy.intercept("POST", `${backendUrl}/auth/login`, {
-      statusCode: 401,
-      body: {
-        message: "Invalid credentials",
-      },
-    }).as("loginFailed");
-
-    cy.get("[data-testid='input-email']").type("wrong@example.com");
-    cy.get("[data-testid='input-password']").type("WrongPassword!");
-
-    cy.get("[data-testid='submit-button']").click();
-
-    cy.wait("@loginFailed");
-
-    cy.get("[data-testid='login-error']").should(
-      "contain",
-      "Invalid credentials"
-    );
-  });
-
-  it("can toggle password visibility", () => {
-    cy.get("[data-testid='input-password']").type("Secret123!");
-    cy.get("[data-testid='toggle-password-visibility']").click();
-    cy.get("[data-testid='input-password']").should("have.attr", "type", "text");
-  });
-
-  it("navigates to register page on click", () => {
-    cy.get("[data-testid='link-register']").click();
-    cy.url().should("include", "/register");
-  });
 });
-

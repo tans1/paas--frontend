@@ -1,0 +1,286 @@
+[
+  {
+    "id": 2,
+    "repoId": 736631982,
+    "branch": "main",
+    "name": "addis_software_frontend",
+    "url": "https://github.com/YaredBT/addis_software_frontend",
+    "framework": "Vite",
+    "linkedByUserId": 2,
+    "createdAt": "2025-05-21T05:43:14.797Z",
+    "environmentVariables": {},
+    "deployedIp": null,
+    "deployedPort": null,
+    "deployedUrl": "yaredbt-addis_software_frontend-mlpx3o.localhost",
+    "activeDeploymentId": null,
+    "localRepoPath": "C:\\Users\\yared\\OneDrive\\Desktop\\paas--backend\\projects\\YaredBT\\addis_software_frontend\\main",
+    "zoneId": null,
+    "aRecordId": null,
+    "cnameRecordId": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "projectDescription": "No description available",
+    "lastCommitMessage": "Update EditMusic.jsx",
+    "status": "PENDING",
+    "dockerComposeFile": "docker-compose.e1ad0c4965fe7cbd308a2d7f76855f35c7d5de47e0cb0030b83cf27bd8a04b51.yml",
+    "deployments": [
+      {
+        "id": 2,
+        "projectId": 2,
+        "status": "failed",
+        "branch": "main",
+        "environmentVariables": null,
+        "rollbackToId": null,
+        "containerName": "yaredbt-addis_software_frontend-9ff95b7d-1a4c-40fc-a169-e208ae5518a7",
+        "imageName": "nahom4/yaredbt-addis_software_frontend:9ff95b7d-1a4c-40fc-a169-e208ae5518a7",
+        "createdAt": "2025-05-21T05:43:16.467Z",
+        "lastCommitMessage": "Update EditMusic.jsx",
+        "logs": [
+          {
+            "id": 6,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "Deployment started for project: 2",
+            "timestamp": "2025-05-21T05:43:16.474Z",
+            "logType": "build"
+          },
+          {
+            "id": 7,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/json?all=1&filters=%7B%22label%22%3A%7B%22com.docker.compose.config-hash%22%3Atrue%2C%22com.docker.compose.project%3Dmain%22%3Atrue%7D%7D\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-21T05:43:17.856Z",
+            "logType": "build"
+          },
+          {
+            "id": 8,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "Project 2 is now running on yaredbt-addis_software_frontend-mlpx3o.localhost",
+            "timestamp": "2025-05-21T05:43:17.953Z",
+            "logType": "build"
+          },
+          {
+            "id": 9,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "Deployment failed: Error pushing image: connect ENOENT //./pipe/docker_engine",
+            "timestamp": "2025-05-21T05:43:17.977Z",
+            "logType": "build"
+          },
+          {
+            "id": 10,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-addis_software_frontend-9ff95b7d-1a4c-40fc-a169-e208ae5518a7/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-21T05:43:18.311Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 12,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-addis_software_frontend-9ff95b7d-1a4c-40fc-a169-e208ae5518a7/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-25T07:52:58.621Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 13,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-addis_software_frontend-9ff95b7d-1a4c-40fc-a169-e208ae5518a7/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-25T12:47:15.574Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 15,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-addis_software_frontend-9ff95b7d-1a4c-40fc-a169-e208ae5518a7/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-26T10:58:23.473Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 18,
+            "deploymentId": 2,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-addis_software_frontend-9ff95b7d-1a4c-40fc-a169-e208ae5518a7/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-26T12:43:10.896Z",
+            "logType": "runtime"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "repoId": 707662528,
+    "branch": "main",
+    "name": "Meal_Searching_Web",
+    "url": "https://github.com/YaredBT/Meal_Searching_Web",
+    "framework": "Vite",
+    "linkedByUserId": 2,
+    "createdAt": "2025-05-21T05:38:21.354Z",
+    "environmentVariables": {},
+    "deployedIp": null,
+    "deployedPort": null,
+    "deployedUrl": "yaredbt-meal_searching_web-rczvea.localhost",
+    "activeDeploymentId": null,
+    "localRepoPath": "C:\\Users\\yared\\OneDrive\\Desktop\\paas--backend\\projects\\YaredBT\\Meal_Searching_Web\\main",
+    "zoneId": null,
+    "aRecordId": null,
+    "cnameRecordId": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "projectDescription": "You can search for your favorite meals in a number of ways and have a look at how they are made.",
+    "lastCommitMessage": "Clear  README.md",
+    "status": "PENDING",
+    "dockerComposeFile": "docker-compose.e1ad0c4965fe7cbd308a2d7f76855f35c7d5de47e0cb0030b83cf27bd8a04b51.yml",
+    "deployments": [
+      {
+        "id": 1,
+        "projectId": 1,
+        "status": "failed",
+        "branch": "main",
+        "environmentVariables": null,
+        "rollbackToId": null,
+        "containerName": "yaredbt-meal_searching_web-e6be4745-cf86-404b-855f-47a50d2d1d41",
+        "imageName": "nahom4/yaredbt-meal_searching_web:e6be4745-cf86-404b-855f-47a50d2d1d41",
+        "createdAt": "2025-05-21T05:38:23.885Z",
+        "lastCommitMessage": "Clear  README.md",
+        "logs": [
+          {
+            "id": 1,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "Deployment started for project: 1",
+            "timestamp": "2025-05-21T05:38:23.900Z",
+            "logType": "build"
+          },
+          {
+            "id": 2,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/json?all=1&filters=%7B%22label%22%3A%7B%22com.docker.compose.config-hash%22%3Atrue%2C%22com.docker.compose.project%3Dmain%22%3Atrue%7D%7D\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-21T05:38:28.068Z",
+            "logType": "build"
+          },
+          {
+            "id": 3,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "Project 1 is now running on yaredbt-meal_searching_web-qpffqz.localhost",
+            "timestamp": "2025-05-21T05:38:28.207Z",
+            "logType": "build"
+          },
+          {
+            "id": 4,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "Deployment failed: Error pushing image: connect ENOENT //./pipe/docker_engine",
+            "timestamp": "2025-05-21T05:38:28.286Z",
+            "logType": "build"
+          },
+          {
+            "id": 5,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-meal_searching_web-e6be4745-cf86-404b-855f-47a50d2d1d41/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-21T05:38:29.018Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 11,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-meal_searching_web-e6be4745-cf86-404b-855f-47a50d2d1d41/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-25T07:52:58.614Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 14,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-meal_searching_web-e6be4745-cf86-404b-855f-47a50d2d1d41/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-25T12:47:15.583Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 16,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-meal_searching_web-e6be4745-cf86-404b-855f-47a50d2d1d41/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-26T10:58:23.483Z",
+            "logType": "runtime"
+          },
+          {
+            "id": 17,
+            "deploymentId": 1,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-meal_searching_web-e6be4745-cf86-404b-855f-47a50d2d1d41/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-26T12:43:10.836Z",
+            "logType": "runtime"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "projectId": 1,
+        "status": "failed",
+        "branch": "main",
+        "environmentVariables": null,
+        "rollbackToId": null,
+        "containerName": "yaredbt-meal_searching_web-6f308617-6f79-4c14-9ada-23b0529c15a5",
+        "imageName": "nahom4/yaredbt-meal_searching_web:6f308617-6f79-4c14-9ada-23b0529c15a5",
+        "createdAt": "2025-05-26T13:54:28.437Z",
+        "lastCommitMessage": "Clear  README.md",
+        "logs": [
+          {
+            "id": 19,
+            "deploymentId": 3,
+            "logLevel": "info",
+            "message": "Deployment started for project: 1",
+            "timestamp": "2025-05-26T13:54:28.458Z",
+            "logType": "build"
+          },
+          {
+            "id": 20,
+            "deploymentId": 3,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/json?all=1&filters=%7B%22label%22%3A%7B%22com.docker.compose.config-hash%22%3Atrue%2C%22com.docker.compose.project%3Dmain%22%3Atrue%7D%7D\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-26T13:54:37.202Z",
+            "logType": "build"
+          },
+          {
+            "id": 21,
+            "deploymentId": 3,
+            "logLevel": "info",
+            "message": "Project 1 is now running on yaredbt-meal_searching_web-rczvea.localhost",
+            "timestamp": "2025-05-26T13:54:37.405Z",
+            "logType": "build"
+          },
+          {
+            "id": 22,
+            "deploymentId": 3,
+            "logLevel": "info",
+            "message": "Deployment failed: Error pushing image: connect ENOENT //./pipe/docker_engine",
+            "timestamp": "2025-05-26T13:54:37.447Z",
+            "logType": "build"
+          },
+          {
+            "id": 23,
+            "deploymentId": 3,
+            "logLevel": "info",
+            "message": "error during connect: this error may indicate that the docker daemon is not running: Get \"http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/containers/yaredbt-meal_searching_web-6f308617-6f79-4c14-9ada-23b0529c15a5/json\": open //./pipe/docker_engine: The system cannot find the file specified.\n",
+            "timestamp": "2025-05-26T13:54:37.699Z",
+            "logType": "runtime"
+          }
+        ]
+      }
+    ]
+  }
+]
