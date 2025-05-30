@@ -36,10 +36,19 @@ import {
 } from "@/components/ui/dialog";
 import Lottie from "lottie-react";
 import loadingAnimation from "../lottie/loadinganimation.json";
+import type { AxiosResponse } from "axios";
 
 interface EnvVar {
   key: string;
   value: string;
+}
+
+// Type for the expected API response from /dns
+interface NameServerResponse {
+  message: string;
+  nameservers: string[];
+  next_steps: string[];
+  documentation_url: string;
 }
 
 export default function ProjectDetail() {
@@ -47,7 +56,6 @@ export default function ProjectDetail() {
   const navigate = useNavigate();
   const [newDomainName, setNewDomainName] = useState("");
   const [showLoader, setShowLoader] = useState(true);
-  const [lastDeploymentId, setLastDeploymentId] = useState(-1);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
@@ -56,6 +64,8 @@ export default function ProjectDetail() {
     null
   );
   const [isRollbackLoading, setIsRollbackLoading] = useState(false);
+  const [addDomainError, setAddDomainError] = useState<string>("");
+  const [isAddDomainDialogOpen, setIsAddDomainDialogOpen] = useState(false);
 
   const {
     fetchProject,
@@ -68,6 +78,7 @@ export default function ProjectDetail() {
     deleteProject,
     rollbackProject,
     addDomain,
+    updateProject,
   } = useDashboardStore();
 
   // Initial project fetch
@@ -138,15 +149,6 @@ export default function ProjectDetail() {
     };
   }, [sockets.deployment, repoId, branch, fetchProject]);
 
-  // Update lastDeploymentId when fetchedProject changes
-  useEffect(() => {
-    if (fetchedProject && fetchedProject.deployments) {
-      if (fetchedProject.deployments.length > 0) {
-        setLastDeploymentId(fetchedProject.deployments[0].id);
-      }
-    }
-  }, [fetchedProject]);
-
   const handleStartProject = async () => {
     if (!fetchedProject) return;
     setIsStarting(true);
@@ -186,11 +188,24 @@ export default function ProjectDetail() {
 
   const handleAddDomainName = async () => {
     if (!fetchedProject || !newDomainName) return;
+    setAddDomainError("");
     try {
-      await addDomain(newDomainName, fetchedProject.id);
+      const response: AxiosResponse<NameServerResponse> = await addDomain(
+        newDomainName,
+        fetchedProject.id
+      );
       setNewDomainName("");
-    } catch {
-      alert("Failed to add domain. Please try again.");
+      if (response.status === 201) {
+        setIsAddDomainDialogOpen(false);
+        navigate("/dashboard/project/nameserver-instructions", {
+          state: response.data,
+        });
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to add domain. Please try again.";
+      setAddDomainError(message);
     }
   };
 
@@ -198,10 +213,15 @@ export default function ProjectDetail() {
   const [originalEnvVars, setOriginalEnvVars] = useState<EnvVar[]>([]);
 
   const [envVars, setEnvVars] = useState<EnvVar[]>(() => {
-    const existing: EnvVar[] =
-      fetchedProject?.deployments?.[0]?.environmentVariables ?? [];
-
-    return [...existing.map((v) => ({ key: v.key, value: v.value }))];
+    const existing: EnvVar[] = fetchedProject?.environmentVariables
+      ? Object.entries(fetchedProject.environmentVariables).map(
+          ([key, value]) => ({
+            key,
+            value: value as string,
+          })
+        )
+      : [];
+    return [...existing];
   });
 
   const handleEditClick = () => {
@@ -229,7 +249,7 @@ export default function ProjectDetail() {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const payload = envVars
       .filter(
         (env: { key: string; value: string }) =>
@@ -237,9 +257,23 @@ export default function ProjectDetail() {
       )
       .map((e) => ({ key: e.key.trim(), value: e.value }));
 
-    console.log(payload);
-    setEditMode(false);
-    setEnvVars(payload);
+    // Convert array to Record<string, string>
+    const envVarsRecord = payload.reduce((acc, { key, value }) => {
+      acc[key] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
+    try {
+      if (fetchedProject) {
+        await updateProject(fetchedProject.id, {
+          environmentVariables: envVarsRecord,
+        });
+        setEditMode(false);
+        setEnvVars(payload);
+      }
+    } catch (error) {
+      console.error("Error saving environment variables:", error);
+    }
   };
 
   const handleRemoveEnvironment = (indexToRemove: number) => {
@@ -297,20 +331,19 @@ export default function ProjectDetail() {
             </div>
           )}
         </div>
-        {Array.isArray(fetchedProject?.deployedUrl) &&
-          fetchedProject.deployedUrl.length > 0 && (
-            <a
-              href={normalizeUrl(fetchedProject.deployedUrl[0], {
-                defaultProtocol: "https",
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-            >
-              <i className="fa-solid fa-external-link-alt"></i>
-              View Live Site
-            </a>
-          )}
+        {fetchedProject?.deployedUrl && (
+          <a
+            href={normalizeUrl(fetchedProject.deployedUrl, {
+              defaultProtocol: "https",
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+          >
+            <i className="fa-solid fa-external-link-alt"></i>
+            View Live Site
+          </a>
+        )}
       </div>
 
       <div className="flex justify-between items-start mt-10">
@@ -436,13 +469,21 @@ export default function ProjectDetail() {
             <i className="fa-solid fa-chart-line"></i>
             <span>Usage</span>
           </button>
-
-          <Dialog>
-            <DialogTrigger className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          <Dialog
+            open={isAddDomainDialogOpen}
+            onOpenChange={setIsAddDomainDialogOpen}
+          >
+            <DialogTrigger
+              className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                setAddDomainError("");
+                setIsAddDomainDialogOpen(true);
+              }}
+            >
               <i className="fa-solid fa-globe"></i>
               <span>Add Domain</span>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="min-h-[250px]">
               <DialogHeader>
                 <DialogDescription>
                   <div className="mt-5">
@@ -459,14 +500,26 @@ export default function ProjectDetail() {
                         className="outline-none border border-blue-500 px-2 py-2 w-[60%] text-black"
                         placeholder="example.com"
                         value={newDomainName}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setNewDomainName(e.target.value)
-                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setNewDomainName(e.target.value);
+                          setAddDomainError("");
+                        }}
                       />
                     </div>
+                    {addDomainError && (
+                      <div className="mb-4 text-red-600 text-center font-semibold bg-red-50 border border-red-200 rounded p-2">
+                        {addDomainError}
+                      </div>
+                    )}
                     <div className="flex justify-end gap-10">
                       <DialogClose asChild>
-                        <button className="border px-3 py-1 border-gray-300 text-black rounded hover:cursor-pointer">
+                        <button
+                          className="border px-3 py-1 border-gray-300 text-black rounded hover:cursor-pointer"
+                          onClick={() => {
+                            setAddDomainError("");
+                            setIsAddDomainDialogOpen(false);
+                          }}
+                        >
                           Cancel
                         </button>
                       </DialogClose>
@@ -489,7 +542,7 @@ export default function ProjectDetail() {
           <Link
             className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
             to={`/dashboard/project/details/${branch}/${repoId}/logs/${
-              lastDeploymentId ? lastDeploymentId : null
+              fetchedProject?.activeDeploymentId ?? null
             }`}
           >
             <i className="fa-solid fa-terminal"></i>
@@ -505,11 +558,31 @@ export default function ProjectDetail() {
           </div>
           <ul>
             <li className="mb-5">
-              <p className="text-gray-500">Domains</p>
+              <p className="text-gray-500">Deployed URL</p>
               <div className="grid gap-1">
-                {Array.isArray(fetchedProject?.deployedUrl) &&
-                fetchedProject.deployedUrl.length > 0 ? (
-                  fetchedProject.deployedUrl.map((domain, idx) => (
+                {fetchedProject?.deployedUrl ? (
+                  <a
+                    href={normalizeUrl(fetchedProject.deployedUrl, {
+                      defaultProtocol: "https",
+                    })}
+                    target="_blank"
+                    className="text-blue-600"
+                  >
+                    {normalizeUrl(fetchedProject.deployedUrl, {
+                      defaultProtocol: "https",
+                    })}
+                  </a>
+                ) : (
+                  <span className="text-gray-400">No deployed URL found</span>
+                )}
+              </div>
+            </li>
+            <li className="mb-5">
+              <p className="text-gray-500">Custom Domains</p>
+              <div className="grid gap-1">
+                {fetchedProject?.customDomains &&
+                fetchedProject.customDomains.length > 0 ? (
+                  fetchedProject.customDomains.map((domain, idx) => (
                     <div key={idx}>
                       <a
                         href={normalizeUrl(domain, {
@@ -518,12 +591,14 @@ export default function ProjectDetail() {
                         target="_blank"
                         className="text-blue-600"
                       >
-                        {normalizeUrl(domain, { defaultProtocol: "https" })}
+                        {normalizeUrl(domain, {
+                          defaultProtocol: "https",
+                        })}
                       </a>
                     </div>
                   ))
                 ) : (
-                  <span className="text-gray-400">No domains found</span>
+                  <span className="text-gray-400">No custom domains found</span>
                 )}
               </div>
             </li>
