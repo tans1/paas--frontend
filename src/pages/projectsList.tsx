@@ -58,7 +58,9 @@ export default function ProjectsList() {
             key={index}
             repoId={project.repoId}
             title={project.name}
-            link={project.deployedUrl}
+            links={
+              Array.isArray(project.deployedUrl) ? project.deployedUrl : []
+            }
             branch={project.branch}
             projectDescription={project.projectDescription}
             githubUrl={project.url}

@@ -332,7 +332,7 @@ export default function DeployProject() {
               onValueChange={(v: string) => setTab(v)}
               className="w-[500px] bg-gray-50 shadow-sm pb-5 px-1"
             >
-              <TabsList className="py-7 w-full">
+              <TabsList className="py-7 w-full">4
                 <TabsTrigger
                   value="file"
                   className=" bg-gray-200 py-5 px-10 mr-3 cursor-pointer"

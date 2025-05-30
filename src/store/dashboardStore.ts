@@ -2,6 +2,7 @@ import api from "../api/axios";
 import { io, Socket } from "socket.io-client";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import type { AxiosResponse } from "axios";
 
 // Existing interface for repositories
 interface Repo {
@@ -56,10 +57,12 @@ interface Project {
   deployedIp?: string;
   deployedPort?: number;
   deployedUrl: string;
+  customDomains: string[];
   deployments?: Deployment[];
   status: "STOPPED" | "RUNNING" | "PENDING";
   lastCommitMessage?: string;
   activeDeploymentId?: number;
+  environmentVariables?: Record<string, string>;
 }
 
 interface ProjectToBeDeployed {
@@ -127,6 +130,27 @@ interface DashboardState {
   stopProject: (projectId: number) => Promise<void>;
   deleteProject: (projectId: number) => Promise<void>;
   rollbackProject: (projectId: number, deploymentId: number) => Promise<void>;
+  addDomain: (domain: string, projectId: number) => Promise<AxiosResponse<any>>;
+  updateProject: (
+    projectId: number,
+    updateData: {
+      name?: string;
+      url?: string;
+      deployedIp?: string;
+      deployedPort?: number;
+      deployedUrl?: string;
+      activeDeploymentId?: number;
+      localRepoPath?: string;
+      zoneId?: string;
+      aRecordId?: string;
+      cnameRecordId?: string;
+      lastCommitMessage?: string;
+      status?: "STOPPED" | "RUNNING" | "PENDING";
+      dockerComposeFile?: string;
+      PORT?: number;
+      environmentVariables?: Record<string, string>;
+    }
+  ) => Promise<void>;
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -349,6 +373,75 @@ export const useDashboardStore = create<DashboardState>()(
         } catch (error: any) {
           console.error("Error rolling back project:", error.message);
           set({ error: error.message });
+        }
+      },
+
+      addDomain: async (
+        domain: string,
+        projectId: number
+      ): Promise<AxiosResponse<any>> => {
+        set({ loading: true, error: null });
+        try {
+          const response = await api.post("/dns", { domain, projectId });
+          // Refresh project data after adding domain
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            await get().fetchProject(
+              currentProject.branch,
+              currentProject.repoId
+            );
+          }
+          return response;
+        } catch (error: any) {
+          console.error("Error adding domain:", error.message);
+          set({ error: error.message });
+          throw error;
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      updateProject: async (
+        projectId: number,
+        updateData: {
+          name?: string;
+          url?: string;
+          deployedIp?: string;
+          deployedPort?: number;
+          deployedUrl?: string;
+          activeDeploymentId?: number;
+          localRepoPath?: string;
+          zoneId?: string;
+          aRecordId?: string;
+          cnameRecordId?: string;
+          lastCommitMessage?: string;
+          status?: "STOPPED" | "RUNNING" | "PENDING";
+          dockerComposeFile?: string;
+          PORT?: number;
+          environmentVariables?: Record<string, string>;
+        }
+      ) => {
+        set({ loading: true, error: null });
+        try {
+          await api.post("/projects/update-project", {
+            id: projectId,
+            ...updateData,
+          });
+
+          // Refresh project data after updating
+          const currentProject = get().fetchedProject;
+          if (currentProject) {
+            await get().fetchProject(
+              currentProject.branch,
+              currentProject.repoId
+            );
+          }
+        } catch (error: any) {
+          console.error("Error updating project:", error.message);
+          set({ error: error.message });
+          throw error;
+        } finally {
+          set({ loading: false });
         }
       },
 
