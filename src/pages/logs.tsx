@@ -78,6 +78,9 @@ export default function LogsPage() {
       // Create socket connections if deployment is in progress
       if (isCurrentlyBuilding && repoId) {
         createWebSocketConnection(parseInt(repoId, 10), branch ?? "", "build");
+      }
+
+      if(repoId){
         createWebSocketConnection(
           parseInt(repoId, 10),
           branch ?? "",

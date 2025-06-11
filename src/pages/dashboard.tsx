@@ -206,7 +206,9 @@ const Dashboard = () => {
                 framework="React"
                 projectName={project.name}
                 lastDeploymentDate={project.createdAt}
-                deployedUrl={project.deployedUrl}
+                deployedUrls={
+                  Array.isArray(project.deployedUrl) ? project.deployedUrl : []
+                }
                 githublink={project.url}
                 repoId={project.repoId}
                 branch={project.branch}

@@ -7,7 +7,7 @@ interface Props {
   framework: Framework;
   projectName: string;
   lastDeploymentDate: string;
-  deployedUrl: string;
+  deployedUrls: string[];
   githublink: string;
   repoId: number;
   branch: string;
@@ -27,7 +27,7 @@ export default function ActiveProjectsListItem({
   framework,
   projectName,
   lastDeploymentDate,
-  deployedUrl,
+  deployedUrls,
   githublink,
   repoId,
   branch,
@@ -47,7 +47,8 @@ export default function ActiveProjectsListItem({
     <TableRow className="hover:bg-white">
       <TableCell
         className="font-bold flex items-center pr-40 hover:cursor-pointer"
-        onClick={handleDetails}>
+        onClick={handleDetails}
+      >
         <img
           src={frameworksImageMap[framework]}
           alt={framework}
@@ -57,23 +58,36 @@ export default function ActiveProjectsListItem({
       </TableCell>
       <TableCell
         className=" pr-40 hover:cursor-pointer"
-        onClick={handleDetails}>
+        onClick={handleDetails}
+      >
         {dateFormat(lastDeploymentDate, "dddd, mmmm dS, yyyy, h:MM TT")}
       </TableCell>
       <TableCell className="">
-        <a
-          href={normalizeUrl(deployedUrl)}
-          className="text-blue-600"
-          target="_blank">
-          {deployedUrl}
-        </a>
+        {deployedUrls && deployedUrls.length > 0 ? (
+          deployedUrls.map((url, idx) => (
+            <span key={url}>
+              <a
+                href={normalizeUrl(url)}
+                className="text-blue-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {url}
+              </a>
+              {idx < deployedUrls.length - 1 && ", "}
+            </span>
+          ))
+        ) : (
+          <span className="text-gray-400">No domains</span>
+        )}
       </TableCell>
 
       <TableCell className="">
         <a
           href={normalizeUrl(githublink)}
           className="text-blue-600"
-          target="_blank">
+          target="_blank"
+        >
           {githublink}
         </a>
       </TableCell>

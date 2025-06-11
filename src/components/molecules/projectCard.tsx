@@ -10,7 +10,7 @@ import { useState } from "react";
 interface CardProps {
   repoId: number;
   title: string;
-  link?: string;
+  links: string[];
   githubUrl?: string;
   branch?: string;
   projectDescription: string;
@@ -18,7 +18,7 @@ interface CardProps {
 
 const ProjectCard = ({
   title,
-  link,
+  links,
   githubUrl,
   branch,
   repoId,
@@ -89,20 +89,25 @@ const ProjectCard = ({
           </a>
         </div>
 
-        {link && (
+        {links && links.length > 0 && (
           <div
             className="flex items-center gap-1 text-sm"
             onClick={stopPropagation}
           >
-            <span className="text-black">Link:</span>
-            <a
-              href={normalizeUrl(link)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline truncate"
-            >
-              {link}
-            </a>
+            <span className="text-black">Links:</span>
+            {links.map((url, idx) => (
+              <span key={url}>
+                <a
+                  href={normalizeUrl(url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline truncate"
+                >
+                  {url}
+                </a>
+                {idx < links.length - 1 && ", "}
+              </span>
+            ))}
           </div>
         )}
       </div>
