@@ -84,6 +84,14 @@ interface ProjectToBeDeployed {
   branches: string[];
 }
 
+interface PaymentStatusResponse {
+  currentStatus: "PENDING" | "PAID" | "OVERDUE" | "NOT-REACHED";
+  currentPaymentAmount?: number;
+  previousAmount?: number;
+  nextPaymentDate?: Date;
+  paymentLink?: string;
+}
+
 interface DashboardState {
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -138,6 +146,11 @@ interface DashboardState {
   stopProject: (projectId: number) => Promise<void>;
   deleteProject: (projectId: number) => Promise<void>;
   rollbackProject: (projectId: number, deploymentId: number) => Promise<void>;
+
+  // Payment
+  fetchedPaymentDetails: PaymentStatusResponse | null;
+  fetchPaymentDetails: () => Promise<void>;
+  fetchPaymentLink: () => Promise<void>;
   addDomain: (domain: string, projectId: number) => Promise<AxiosResponse<any>>;
   updateProject: (
     projectId: number,
@@ -463,6 +476,20 @@ export const useDashboardStore = create<DashboardState>()(
           throw error;
         }
       },
+      fetchedPaymentDetails: null,
+      fetchPaymentDetails: async () => {
+        try {
+          const { data } = await api.get<PaymentStatusResponse>(
+            "/payment/details"
+          );
+          set({ fetchedPaymentDetails: data });
+        } catch (error: any) {
+          console.error("Error fetching:", error);
+          set({ error: error.message });
+          throw error;
+        }
+      },
+      fetchPaymentLink: async () => {},
     }),
     {
       name: "dashboard-storage",
