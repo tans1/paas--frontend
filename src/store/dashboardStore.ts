@@ -45,6 +45,14 @@ interface Deployment {
   lastCommitMessage?: string;
 }
 
+
+interface customDomain{
+  id: number;
+  domain: string
+  live: boolean,
+  createdAt: string,
+}
+
 interface Project {
   id: number;
   repoId: number;
@@ -57,7 +65,7 @@ interface Project {
   deployedIp?: string;
   deployedPort?: number;
   deployedUrl: string;
-  customDomains: string[];
+  customDomains: customDomain[];
   deployments?: Deployment[];
   status: "STOPPED" | "RUNNING" | "PENDING";
   lastCommitMessage?: string;
