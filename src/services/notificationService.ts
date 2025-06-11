@@ -22,7 +22,7 @@ interface NotificationStore {
   fetchUnreadNotifications: () => Promise<void>;
 }
 
-export const useNotificationStore = create<NotificationStore>((set, get) => ({
+export const useNotificationStore = create<NotificationStore>((set, _get) => ({
   notifications: [],
   unreadCount: 0,
 
@@ -77,7 +77,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     try {
       const response = await axios.get("/api/notifications");
       const notifications = response.data;
-      set((state) => ({
+      set((_state) => ({
         notifications,
         unreadCount: notifications.filter((n: Notification) => !n.read).length,
       }));
@@ -90,7 +90,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     try {
       const response = await axios.get("/api/notifications/unread");
       const unreadNotifications = response.data;
-      set((state) => ({
+      set((_state) => ({
         unreadCount: unreadNotifications.length,
       }));
     } catch (error) {
