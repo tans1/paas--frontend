@@ -13,20 +13,25 @@ import { useDashboardStore } from "../store/dashboardStore";
 import { useUserStore } from "../store/userStore";
 import Lottie from "lottie-react";
 import loadingAnimation from "../lottie/loadinganimation.json";
+import api from "../api/axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { fetchProjects, projects, loading, connectGithub } =
-    useDashboardStore();
-  const { user } = useUserStore();
+  const {
+    fetchProjects,
+    projects,
+    loading,
+    connectGithub,
+    fetchPaymentDetails,
+    fetchedPaymentDetails,
+  } = useDashboardStore();
+  const { fetchUserProfile, user } = useUserStore();
   const [showLoader, setShowLoader] = useState(true);
 
-  console.log("Dashboard render:", {
-    loading,
-    showLoader,
-    projectsLength: projects?.length,
-  });
-
+  useEffect(() => {
+    fetchUserProfile();
+    console.log("the user is", user);
+  }, [fetchUserProfile]);
   const handleProjectClick = () => {
     navigate("/dashboard/projects");
   };
@@ -43,16 +48,23 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    console.log("Dashboard useEffect triggered");
+    const fetchDetails = async () => {
+      try {
+        await fetchPaymentDetails();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDetails();
+  }, [fetchPaymentDetails]);
+
+  useEffect(() => {
     const fetchAllProjects = async () => {
-      console.log("Starting to fetch projects");
       try {
         await fetchProjects();
-        console.log("Projects fetched successfully");
       } catch (error) {
         console.error("Error fetching projects:", error);
       } finally {
-        console.log("Setting showLoader to false");
         setTimeout(() => setShowLoader(false), 2000);
       }
     };
@@ -60,7 +72,6 @@ const Dashboard = () => {
   }, [fetchProjects]);
 
   if (loading || showLoader) {
-    console.log("Showing loader:", { loading, showLoader });
     return (
       <div className="w-full h-[90vh] flex justify-center items-center ">
         <div className="w-[10%] h-full m-auto flex flex-col justify-center">
@@ -69,6 +80,19 @@ const Dashboard = () => {
       </div>
     );
   }
+
+  const handlePayButton = async () => {
+    console.log("inside the handle pay button");
+    try {
+      const { data } = await api.get("/payment/link");
+      if (data?.paymentUrl) {
+        // window.open(data.paymentUrl, "_blank");
+        window.open(data.paymentUrl);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="">
@@ -79,16 +103,14 @@ const Dashboard = () => {
             {!user?.githubUsername && (
               <button
                 onClick={handleGithubConnect}
-                className="flex items-center gap-2 bg-[#24292F] text-white px-6 py-2 rounded-md hover:bg-[#1B1F23] transition-colors shadow-sm"
-              >
+                className="flex items-center gap-2 bg-[#24292F] text-white px-6 py-2 rounded-md hover:bg-[#1B1F23] transition-colors shadow-sm">
                 <Github className="w-5 h-5" />
                 Connect GitHub
               </button>
             )}
             <button
               className="text-black font-semibold bg-white px-10 py-2 rounded cursor-pointer shadow-sm"
-              onClick={handleProjectClick}
-            >
+              onClick={handleProjectClick}>
               All Projects
             </button>
           </div>
@@ -117,12 +139,49 @@ const Dashboard = () => {
 
           <div className="bg-white p-4 rounded-xl shadow-md w-80 h-40 flex flex-col justify-between">
             <div className="flex justify-between">
-              <div className="text-xl font-semibold">Max CPU </div>
+              <div>
+                <div className="text-base font-semibold">
+                  Estimated{" "}
+                  <span className="text-red-500">
+                    {fetchedPaymentDetails?.currentPaymentAmount} Birr
+                  </span>
+                </div>
+                <div className="text-base font-semibold">
+                  {" "}
+                  Next Payment date:{" "}
+                  {fetchedPaymentDetails?.nextPaymentDate
+                    ? new Date(
+                        fetchedPaymentDetails.nextPaymentDate
+                      ).toDateString()
+                    : "N/A"}
+                </div>
+                <div className="text-base font-semibold">
+                  {" "}
+                  Previous paid Amount: {fetchedPaymentDetails?.previousAmount}
+                </div>
+              </div>
               <div>
                 <Cpu className="text-green-500" />
               </div>
             </div>
-            <div className="text-5xl font-semibold">76%</div>
+            <div className="flex justify-between">
+              <div className="text-xl font-semibold ">
+                Status: {fetchedPaymentDetails?.currentStatus}
+              </div>
+              <div>
+                {["PENDING", "OVERDUE", ""].includes(
+                  fetchedPaymentDetails?.currentStatus ?? ""
+                ) ? (
+                  <button
+                    className="px-4 py-1 cursor-pointer rounded-sm bg-green-600 text-white font-semibold"
+                    onClick={handlePayButton}>
+                    Pay
+                  </button>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
