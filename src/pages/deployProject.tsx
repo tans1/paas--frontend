@@ -14,6 +14,8 @@ import { useUserStore } from "../store/userStore";
 import deployProject from "../api/deploy";
 import api from "../api/axios";
 import { AxiosError } from "axios";
+import StatusBanner from "../components/molecules/StatusBanner";
+import { Framework, frameworksImageMap } from "@/types/frameworks";
 
 interface EnvPair {
   key: string;
@@ -49,13 +51,38 @@ export default function DeployProject() {
   const [isDetectingFramework, setIsDetectingFramework] = useState(false);
 
   const frameworks = [
-    "React",
-    "Vue.js",
-    "Angular",
-    "Nestjs",
-    "Docker",
-    "CreateReactApp",
-    "Vite"
+    {
+      name: "React" as Framework,
+      logo: frameworksImageMap["React"],
+    },
+    {
+      name: "Vue.js" as Framework,
+      logo: frameworksImageMap["Vue"],
+    },
+    {
+      name: "Angular" as Framework,
+      logo: frameworksImageMap["Angular"],
+    },
+    {
+      name: "NestJS" as Framework,
+      logo: frameworksImageMap["NestJS"],
+    },
+    {
+      name: "Docker" as Framework,
+      logo: frameworksImageMap["Docker"],
+    },
+    {
+      name: "CreateReactApp" as Framework,
+      logo: frameworksImageMap["CreateReactApp"],
+    },
+    {
+      name: "Vite" as Framework,
+      logo: frameworksImageMap["Vite"],
+    },
+    {
+      name: "Python" as Framework,
+      logo: frameworksImageMap["Python"],
+    },
   ];
 
   const [tab, setTab] = useState<string>("file");
@@ -66,7 +93,12 @@ export default function DeployProject() {
 
   const onDrop = (accepted: File[]) => {
     if (accepted.length > 0) {
-      handleFileChange({ target: { files: accepted } } as any);
+      const event = {
+        target: {
+          files: accepted,
+        },
+      } as unknown as ChangeEvent<HTMLInputElement>;
+      handleFileChange(event);
     }
   };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -102,7 +134,12 @@ export default function DeployProject() {
     navigate("/dashboard/add");
   };
 
+  const isUserActive = user?.status === "ACTIVE";
+
   const handleDeploy = async () => {
+    if (!isUserActive) {
+      return;
+    }
     const project: DeployedProject = {
       envVars: envVars
         .filter((p) => p.key.trim() !== "" && p.value.trim() !== "")
@@ -176,7 +213,8 @@ export default function DeployProject() {
   }, [branch, toBeDeployedProject?.repoName, user?.githubUsername]);
 
   return (
-    <div className="w-full mt-10 pl-10 pr-40">
+    <div className="mt-10 pl-10 pr-40">
+      <StatusBanner />
       <div className="bt-5">
         <p className="text-black text-4xl font-bold mb-4">
           {toBeDeployedProject?.repoName}
@@ -198,7 +236,14 @@ export default function DeployProject() {
             >
               <AccordionItem value={framework ?? ""}>
                 <AccordionTrigger className="hover:no-underline cursor-pointer w-full flex justify-between items-center py-2">
-                  <div>{framework}</div>
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={frameworks.find((f) => f.name === framework)?.logo}
+                      alt={framework}
+                      className="w-6 h-6 rounded-full"
+                    />
+                    <span>{framework}</span>
+                  </div>
                   <div>
                     <ChevronDown size={18} />
                   </div>
@@ -208,10 +253,17 @@ export default function DeployProject() {
                   {frameworks.map((frm, index) => (
                     <AccordionContent
                       key={index}
-                      className="cursor-pointer text-sm my-3 hover:bg-gray-100 py-1"
-                      onClick={() => setFramework(frm)}
+                      className="cursor-pointer text-sm my-3 hover:bg-gray-100 py-1 px-2"
+                      onClick={() => setFramework(frm.name)}
                     >
-                      {frm}
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={frm.logo}
+                          alt={frm.name}
+                          className="w-6 h-6 rounded-full"
+                        />
+                        <span>{frm.name}</span>
+                      </div>
                     </AccordionContent>
                   ))}
                 </div>
@@ -332,7 +384,8 @@ export default function DeployProject() {
               onValueChange={(v: string) => setTab(v)}
               className="w-[500px] bg-gray-50 shadow-sm pb-5 px-1"
             >
-              <TabsList className="py-7 w-full">4
+              <TabsList className="py-7 w-full">
+                4
                 <TabsTrigger
                   value="file"
                   className=" bg-gray-200 py-5 px-10 mr-3 cursor-pointer"
@@ -395,16 +448,17 @@ export default function DeployProject() {
             </Tabs>
           </div>
 
-          <div className="flex gap-2 ">
+          <div className="flex justify-end gap-4 mt-6">
             <button
-              className="px-10 py-2 border cursor-pointer"
               onClick={handleCancel}
+              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
-              className="px-10 py-2 bg-blue-600 text-white rounded cursor-pointer"
               onClick={handleDeploy}
+              disabled={!isUserActive}
+              className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Deploy
             </button>

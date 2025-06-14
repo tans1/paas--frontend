@@ -71,6 +71,7 @@ interface Project {
   lastCommitMessage?: string;
   activeDeploymentId?: number;
   environmentVariables?: Record<string, string>;
+  framework?: string;
 }
 
 interface ProjectToBeDeployed {
@@ -109,6 +110,7 @@ interface DashboardState {
   // Properties for projects
   projects: Project[];
   fetchProjects: () => Promise<void>;
+  fetchAllProjects: () => Promise<void>;
 
   // currentProject is used elsewhere (e.g., when a user clicks on a project)
   currentProject: Project | null;
@@ -221,6 +223,18 @@ export const useDashboardStore = create<DashboardState>()(
         set({ loading: true, error: null });
         try {
           const { data } = await api.get<Project[]>("/projects/my-projects");
+          set({ projects: data });
+        } catch (error: any) {
+          set({ error: error.message });
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      fetchAllProjects: async () => {
+        set({ loading: true, error: null });
+        try {
+          const { data } = await api.get<Project[]>("/projects/all-projects");
           set({ projects: data });
         } catch (error: any) {
           set({ error: error.message });

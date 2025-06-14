@@ -9,12 +9,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Home, Settings, Landmark, Rows3, FilePlus } from "lucide-react";
+import {
+  Home,
+  Settings,
+  Landmark,
+  Rows3,
+  FilePlus,
+  Shield,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
 const AppSidebar: React.FC = () => {
   // const setActiveTab = useDashboardStore((state) => state.setActiveTab);
   const navigate = useNavigate();
+  const { user } = useUserStore();
+
   const items = [
     {
       title: "Dashboard",
@@ -43,6 +53,15 @@ const AppSidebar: React.FC = () => {
     },
   ];
 
+  // Add admin link if user is admin
+  if (user?.role === "ADMIN") {
+    items.push({
+      title: "Admin",
+      url: "/dashboard/admin",
+      icon: Shield,
+    });
+  }
+
   const handleNavigation = (url: string) => {
     navigate(url);
   };
@@ -60,7 +79,8 @@ const AppSidebar: React.FC = () => {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="hover:bg-sidebar-hover hover:text-white hover:cursor-pointer">
+                    className="hover:bg-sidebar-hover hover:text-white hover:cursor-pointer"
+                  >
                     <p onClick={() => handleNavigation(item.url)}>
                       <item.icon />
                       <span>{item.title}</span>

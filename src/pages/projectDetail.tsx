@@ -37,6 +37,8 @@ import {
 import Lottie from "lottie-react";
 import loadingAnimation from "../lottie/loadinganimation.json";
 import type { AxiosResponse } from "axios";
+import { useUserStore } from "../store/userStore";
+import StatusBanner from "../components/molecules/StatusBanner";
 
 interface EnvVar {
   key: string;
@@ -80,6 +82,10 @@ export default function ProjectDetail() {
     addDomain,
     updateProject,
   } = useDashboardStore();
+
+  const { user } = useUserStore();
+
+  const isUserActive = user?.status === "ACTIVE";
 
   // Initial project fetch
   useEffect(() => {
@@ -308,6 +314,7 @@ export default function ProjectDetail() {
 
   return (
     <div className="mt-10 pl-10 pr-40">
+      <StatusBanner />
       <PagesTitle title={fetchedProject?.name || ""} subtitle="Details" />
 
       <div className="flex items-center gap-4 mb-6">
@@ -358,7 +365,7 @@ export default function ProjectDetail() {
             {fetchedProject?.status === "STOPPED" && (
               <button
                 onClick={handleStartProject}
-                disabled={isStarting}
+                disabled={isStarting || !isUserActive}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-green-600 rounded hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isStarting ? (
@@ -378,7 +385,7 @@ export default function ProjectDetail() {
             {fetchedProject?.status === "RUNNING" && (
               <button
                 onClick={handleStopProject}
-                disabled={isStopping}
+                disabled={isStopping || !isUserActive}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-yellow-600 rounded hover:bg-yellow-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isStopping ? (
@@ -688,14 +695,16 @@ export default function ProjectDetail() {
                         Logs
                       </DropdownMenuItem>
                     </Link>
-                    {i !== 0 && deployment.status === "deployed" && (
-                      <DropdownMenuItem
-                        className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100 text-blue-600"
-                        onClick={() => setShowRollbackConfirm(deployment.id)}
-                      >
-                        Rollback to this version
-                      </DropdownMenuItem>
-                    )}
+                    {i !== 0 &&
+                      deployment.status === "deployed" &&
+                      isUserActive && (
+                        <DropdownMenuItem
+                          className="p-2 px-4 hover:cursor-pointer hover:bg-gray-100 text-blue-600"
+                          onClick={() => setShowRollbackConfirm(deployment.id)}
+                        >
+                          Rollback to this version
+                        </DropdownMenuItem>
+                      )}
                   </DropdownMenuContent>
                 </DropdownMenu>
 

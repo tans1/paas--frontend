@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { Framework, frameworksImageMap } from "@/types/frameworks";
 
 interface CardProps {
   repoId: number;
@@ -14,6 +15,7 @@ interface CardProps {
   githubUrl?: string;
   branch?: string;
   projectDescription: string;
+  framework?: string;
 }
 
 const ProjectCard = ({
@@ -23,6 +25,7 @@ const ProjectCard = ({
   branch,
   repoId,
   projectDescription,
+  framework = "React",
 }: CardProps) => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -51,7 +54,14 @@ const ProjectCard = ({
       onClick={handleCardClick}
     >
       <div className="flex justify-between items-start mb-4">
-        <div className="text-2xl font-semibold text-gray-900">{title}</div>
+        <div className="flex items-center gap-3">
+          <img
+            src={frameworksImageMap[framework as Framework]}
+            alt={framework}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <div className="text-2xl font-semibold text-gray-900">{title}</div>
+        </div>
         <div
           className="flex items-center gap-2 text-xl"
           onClick={stopPropagation}
@@ -75,14 +85,14 @@ const ProjectCard = ({
         {projectDescription ?? "No descriptions found"}
       </p>
 
-      <div className="flex flex-col mt-6 gap-4">
+      <div className="mt-4 space-y-2">
         <div className="w-44">
           <a
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={stopPropagation}
-            className="flex items-baseline text-sm text-blue-600 hover:underline truncate "
+            className="flex items-baseline text-sm text-blue-600 hover:underline truncate"
           >
             <i className="fa-brands fa-github mr-2 text-lg text-black"></i>
             Github repo

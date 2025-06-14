@@ -64,6 +64,7 @@ export default function ProjectsList() {
             branch={project.branch}
             projectDescription={project.projectDescription}
             githubUrl={project.url}
+            framework={project.framework}
           />
         ))}
       </div>

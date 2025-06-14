@@ -16,10 +16,14 @@ import ProtectedRoute from "./routes/protected.routes";
 import DashboardStructure from "./components/templates/dashboardStructure";
 import Settings from "./pages/settings";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Toaster } from "sonner";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 function App() {
   return (
     <Router>
+      <Toaster position="top-right" richColors />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -30,6 +34,8 @@ function App() {
           <Route path="integration-success" element={<IntegrationSuccess />} />
           <Route path="integration-failure" element={<IntegrationFailure />} />
           <Route path="register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/dashboard/*"
