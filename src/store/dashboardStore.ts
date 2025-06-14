@@ -45,6 +45,14 @@ interface Deployment {
   lastCommitMessage?: string;
 }
 
+
+interface customDomain{
+  id: number;
+  domain: string
+  live: boolean,
+  createdAt: string,
+}
+
 interface Project {
   id: number;
   repoId: number;
@@ -57,7 +65,7 @@ interface Project {
   deployedIp?: string;
   deployedPort?: number;
   deployedUrl: string;
-  customDomains: string[];
+  customDomains: customDomain[];
   deployments?: Deployment[];
   status: "STOPPED" | "RUNNING" | "PENDING";
   lastCommitMessage?: string;
@@ -75,6 +83,14 @@ interface ProjectToBeDeployed {
   description: string;
   html_url: string;
   branches: string[];
+}
+
+interface PaymentStatusResponse {
+  currentStatus: "PENDING" | "PAID" | "OVERDUE" | "NOT-REACHED";
+  currentPaymentAmount?: number;
+  previousAmount?: number;
+  nextPaymentDate?: Date;
+  paymentLink?: string;
 }
 
 interface DashboardState {
@@ -132,6 +148,11 @@ interface DashboardState {
   stopProject: (projectId: number) => Promise<void>;
   deleteProject: (projectId: number) => Promise<void>;
   rollbackProject: (projectId: number, deploymentId: number) => Promise<void>;
+
+  // Payment
+  fetchedPaymentDetails: PaymentStatusResponse | null;
+  fetchPaymentDetails: () => Promise<void>;
+  fetchPaymentLink: () => Promise<void>;
   addDomain: (domain: string, projectId: number) => Promise<AxiosResponse<any>>;
   updateProject: (
     projectId: number,
@@ -469,6 +490,20 @@ export const useDashboardStore = create<DashboardState>()(
           throw error;
         }
       },
+      fetchedPaymentDetails: null,
+      fetchPaymentDetails: async () => {
+        try {
+          const { data } = await api.get<PaymentStatusResponse>(
+            "/payment/details"
+          );
+          set({ fetchedPaymentDetails: data });
+        } catch (error: any) {
+          console.error("Error fetching:", error);
+          set({ error: error.message });
+          throw error;
+        }
+      },
+      fetchPaymentLink: async () => {},
     }),
     {
       name: "dashboard-storage",

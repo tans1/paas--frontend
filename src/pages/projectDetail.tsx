@@ -589,16 +589,16 @@ export default function ProjectDetail() {
               <div className="grid gap-1">
                 {fetchedProject?.customDomains &&
                 fetchedProject.customDomains.length > 0 ? (
-                  fetchedProject.customDomains.map((domain, idx) => (
+                  fetchedProject.customDomains.map((customDomain, idx) => (
                     <div key={idx}>
                       <a
-                        href={normalizeUrl(domain, {
+                        href={normalizeUrl(customDomain.domain, {
                           defaultProtocol: "https",
                         })}
                         target="_blank"
                         className="text-blue-600"
                       >
-                        {normalizeUrl(domain, {
+                        {normalizeUrl(customDomain.domain, {
                           defaultProtocol: "https",
                         })}
                       </a>

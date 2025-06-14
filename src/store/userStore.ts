@@ -100,6 +100,7 @@ export const useUserStore = create<UserState & UserActions>()(
             { headers: { Authorization: `Bearer ${token}` } }
           );
 
+          console.log("the incoming data is", data);
           set((state) => ({
             user: { ...state.user, ...data } as User,
           }));
