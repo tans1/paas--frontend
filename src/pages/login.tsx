@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import TextInput from "../components/atoms/textInput";
 import LoginRequest from "../api/auth";
 import { useUserStore } from "@/store/userStore";
@@ -132,12 +132,12 @@ const Login = () => {
                     Remember me
                   </label>
                 </div>
-                <a
-                  href="#"
+                <Link
+                  to="/forgot-password"
                   className="text-sm text-indigo-600 hover:text-indigo-500"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </div>
 
               <button

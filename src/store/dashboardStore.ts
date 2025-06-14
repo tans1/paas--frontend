@@ -63,6 +63,7 @@ interface Project {
   lastCommitMessage?: string;
   activeDeploymentId?: number;
   environmentVariables?: Record<string, string>;
+  framework?: string;
 }
 
 interface ProjectToBeDeployed {

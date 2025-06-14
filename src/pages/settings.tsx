@@ -3,8 +3,11 @@ import AppSidebar from "../components/molecules/sidebar";
 import Navbar from "@/components/molecules/navbar";
 import TextInput from "../components/atoms/textInput";
 import { usePasswordChangeForm } from "../hooks/usePasswordChangeForm";
+import { useUserStore } from "@/store/userStore";
+import { toast } from "sonner";
 
 const Settings = () => {
+  const { updatePassword, user } = useUserStore();
   const {
     currentPassword,
     newPassword,
@@ -15,10 +18,35 @@ const Settings = () => {
     errorMessage,
     isLoading,
     handleChange,
-    handlePasswordChange,
     togglePasswordVisibility,
     isFormValid,
   } = usePasswordChangeForm();
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.id) {
+      toast.error("User ID not found");
+      return;
+    }
+    try {
+      await updatePassword({
+        currentPassword,
+        newPassword,
+        id: user.id,
+      });
+      toast.success("Password updated successfully");
+      // Reset form state
+      handleChange("currentPassword", "");
+      handleChange("newPassword", "");
+      handleChange("confirmPassword", "");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to update password");
+      }
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -40,10 +68,14 @@ const Settings = () => {
                 label="Current password"
                 type={showPassword.current ? "text" : "password"}
                 value={currentPassword}
-                onChange={(e) => handleChange("currentPassword", e.target.value)}
+                onChange={(e) =>
+                  handleChange("currentPassword", e.target.value)
+                }
                 error={errors.currentPassword}
                 placeholder="********"
-                togglePasswordVisibility={() => togglePasswordVisibility("current")}
+                togglePasswordVisibility={() =>
+                  togglePasswordVisibility("current")
+                }
                 name="currentPassword"
               />
 
@@ -62,10 +94,14 @@ const Settings = () => {
                 label="Confirm new password"
                 type={showPassword.confirm ? "text" : "password"}
                 value={confirmPassword}
-                onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                onChange={(e) =>
+                  handleChange("confirmPassword", e.target.value)
+                }
                 error={errors.confirmPassword}
                 placeholder="********"
-                togglePasswordVisibility={() => togglePasswordVisibility("confirm")}
+                togglePasswordVisibility={() =>
+                  togglePasswordVisibility("confirm")
+                }
                 name="confirmPassword"
               />
 
@@ -83,15 +119,20 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`mt-4 w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${isFormValid ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                className={`mt-4 w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${
+                  isFormValid
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
               >
                 {isLoading ? "Saving..." : "Save Changes"}
               </button>
             </form>
 
             {successMessage && (
-              <p className="text-green-600 mt-4 text-center">{successMessage}</p>
+              <p className="text-green-600 mt-4 text-center">
+                {successMessage}
+              </p>
             )}
             {errorMessage && (
               <p className="text-red-600 mt-4 text-center">{errorMessage}</p>
