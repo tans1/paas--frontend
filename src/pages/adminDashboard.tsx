@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
+import { useDashboardStore } from "../store/dashboardStore";
 import { Shield, Activity, Users, Server } from "lucide-react";
 
 const AdminDashboard = () => {
-  const { user } = useUserStore();
+  const { user, users } = useUserStore();
+  const { fetchAllProjects, projects } = useDashboardStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -12,8 +14,17 @@ const AdminDashboard = () => {
     if (user?.role !== "ADMIN") {
       navigate("/dashboard");
     }
-    setIsLoading(false);
-  }, [user, navigate]);
+    const fetchData = async () => {
+      try {
+        await fetchAllProjects();
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [user, navigate, fetchAllProjects]);
 
   if (isLoading) {
     return (
@@ -22,6 +33,11 @@ const AdminDashboard = () => {
       </div>
     );
   }
+
+  const runningProjects = projects.filter(
+    (project) => project.status === "RUNNING"
+  );
+  const activeUsers = users.filter((user) => user.status === "ACTIVE").length;
 
   const adminFeatures = [
     {
@@ -163,7 +179,9 @@ const AdminDashboard = () => {
                   <div className="text-sm font-medium text-blue-600 mb-1">
                     Active Users
                   </div>
-                  <div className="text-3xl font-bold text-blue-900">0</div>
+                  <div className="text-3xl font-bold text-blue-900">
+                    {activeUsers}
+                  </div>
                 </div>
                 <div className="p-3 rounded-lg bg-blue-100">
                   <Users className="w-6 h-6 text-blue-600" />
@@ -176,7 +194,9 @@ const AdminDashboard = () => {
                   <div className="text-sm font-medium text-green-600 mb-1">
                     Running Projects
                   </div>
-                  <div className="text-3xl font-bold text-green-900">0</div>
+                  <div className="text-3xl font-bold text-green-900">
+                    {runningProjects.length}
+                  </div>
                 </div>
                 <div className="p-3 rounded-lg bg-green-100">
                   <Activity className="w-6 h-6 text-green-600" />
