@@ -42,5 +42,5 @@ jobs:
           script: |
             cd ~/final-year/paas--frontend
             docker compose down
-            git pull origin main
+            git pull https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git main
             docker compose up --build -d
