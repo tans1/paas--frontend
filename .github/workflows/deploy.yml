@@ -1,0 +1,46 @@
+# .github/workflows/ci-deploy.yml
+name: CI & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # test:
+  #   name: 🧪 Run Tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Use Node.js 18
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 18
+
+  #     - name: Install dependencies
+  #       run: npm ci
+
+  #     - name: Run tests
+  #       run: npm test
+
+  deploy:
+    name: 🚀 Deploy to Remote
+    # needs: test
+    # if: ${{ needs.test.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH & Deploy over Password
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}       
+          username: ${{ secrets.SSH_USER }}    
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          ssh-strict: false                   
+          script: |
+            cd ~/final-year/paas--frontend
+            docker compose down
+            git pull origin main
+            docker compose up --build
