@@ -34,7 +34,7 @@ const Chatbot = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5005/webhooks/rest/webhook",
+        "http://185.159.131.163:5005/webhooks/rest/webhook",
         {
           message: input,
           isUser: true,
