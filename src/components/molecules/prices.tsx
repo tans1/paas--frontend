@@ -1,129 +1,217 @@
-import { Check, X } from 'lucide-react'
-import ScrollFade from '../ui/scroll-fade'
+import { Check } from "lucide-react";
+import ScrollFade from "../ui/scroll-fade";
 
 const Prices = () => {
-    return (
-        <ScrollFade>
-            <section id="pricing" className="my- 10 py-20 bg-gray-50 fade-section">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Simple Pricing</h2>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">Choose the perfect plan for your needs. No hidden fees, cancel anytime.</p>
+  return (
+    <ScrollFade>
+      <section
+        id="pricing"
+        className="my- 10 py-20 bg-gradient-to-br from-gray-50 to-blue-50 fade-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Pay only for what you use. No hidden fees, no commitments, scale
+              as you grow.
+            </p>
+          </div>
+
+          {/* Main Pricing Card */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+              <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 text-center">
+                <h3 className="text-3xl font-bold mb-2">Pay As You Go</h3>
+                <p className="text-indigo-100 text-lg">
+                  Unlimited resources, transparent pricing
+                </p>
+              </div>
+
+              <div className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                  <div className="text-center group">
+                    <div className="bg-blue-50 rounded-xl p-6 group-hover:bg-blue-100 transition-colors duration-300">
+                      <div className="text-4xl font-bold text-blue-600 mb-2">
+                        0.02
+                      </div>
+                      <div className="text-sm text-gray-600 font-medium">
+                        Birr per CPU second
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Pay only for active CPU time
+                      </div>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        {/* Basic Plan */}
-                        <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                            <div className="p-8">
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-2">Basic</h3>
-                                <p className="text-gray-600 mb-6">Perfect for individuals getting started</p>
-                                <div className="mb-6">
-                                    <span className="text-4xl font-bold text-gray-900">1000<span className='text-xl'>birr</span></span>
-                                    <span className="text-gray-500">/month</span>
-                                </div>
-                                <ul className="space-y-3 mb-8">
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>10 Projects</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>5GB Storage</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>Basic Analytics</span>
-                                    </li>
-                                    <li className="flex items-center text-gray-400">
-                                        <i className="mr-2"><X /></i>
-                                        <span>Priority Support</span>
-                                    </li>
-                                </ul>
-                                <a href="/register">
-                                    <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-colors duration-300">
-                                        Get Started
-                                    </button>
-                                </a>
-                            </div>
-                        </div>
-
-                        {/* Popular Plan */}
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden transform scale-105 border-2 border-indigo-500">
-                            <div className="bg-indigo-500 text-white text-center py-2">
-                                <span className="text-sm font-semibold">MOST POPULAR</span>
-                            </div>
-                            <div className="p-8">
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-2">Pro</h3>
-                                <p className="text-gray-600 mb-6">For growing businesses and teams</p>
-                                <div className="mb-6">
-                                    <span className="text-4xl font-bold text-gray-900">2500<span className='text-xl'>birr</span></span>
-                                    <span className="text-gray-500">/month</span>
-                                </div>
-                                <ul className="space-y-3 mb-8">
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>Unlimited Projects</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>50GB Storage</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>Advanced Analytics</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>Priority Support</span>
-                                    </li>
-                                </ul>
-                                <a href="/register">
-                                    <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 btn-glow">
-                                        Get Started
-                                    </button>
-                                </a>
-                            </div>
-                        </div>
-
-                        {/* Enterprise Plan */}
-                        <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                            <div className="p-8">
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-2">Enterprise</h3>
-                                <p className="text-gray-600 mb-6">For large organizations, starting price at</p>
-                                <div className="mb-6">
-                                    <span className="text-4xl font-bold text-gray-900">2900<span className='text-xl'>birr</span></span>
-                                    <span className="text-gray-500">/month</span>
-                                </div>
-                                <ul className="space-y-3 mb-8">
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>Unlimited Projects</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>1TB Storage</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>Advanced Analytics</span>
-                                    </li>
-                                    <li className="flex items-center">
-                                        <i className="text-green-500 mr-2"><Check /></i>
-                                        <span>24/7 Dedicated Support</span>
-                                    </li>
-                                </ul>
-                                <a href="/#contact">
-                                    <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-colors duration-300">
-                                        Contact Sales
-                                    </button>
-                                </a>
-                            </div>
-                        </div>
+                  </div>
+                  <div className="text-center group">
+                    <div className="bg-green-50 rounded-xl p-6 group-hover:bg-green-100 transition-colors duration-300">
+                      <div className="text-4xl font-bold text-green-600 mb-2">
+                        0.00003
+                      </div>
+                      <div className="text-sm text-gray-600 font-medium">
+                        Birr per MB memory second
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Pay only for memory usage
+                      </div>
                     </div>
+                  </div>
+                  <div className="text-center group">
+                    <div className="bg-purple-50 rounded-xl p-6 group-hover:bg-purple-100 transition-colors duration-300">
+                      <div className="text-4xl font-bold text-purple-600 mb-2">
+                        0.002
+                      </div>
+                      <div className="text-sm text-gray-600 font-medium">
+                        Birr per MB network second
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Pay only for data transfer
+                      </div>
+                    </div>
+                  </div>
                 </div>
-            </section>
-        </ScrollFade>
-    )
-}
 
-export default Prices
+                <div className="text-center mb-8">
+                  <a href="/register">
+                    <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                      Start Building Now
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefits Section */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center group">
+              <div className="bg-white rounded-xl p-6 shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-6 h-6 text-indigo-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  No Hidden Fees
+                </h4>
+                <p className="text-gray-600 text-sm">
+                  Transparent pricing with no surprises
+                </p>
+              </div>
+            </div>
+            {/* <div className="text-center group">
+              <div className="bg-white rounded-xl p-6 shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-6 h-6 text-green-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  Scale Instantly
+                </h4>
+                <p className="text-gray-600 text-sm">
+                  Grow or shrink resources on demand
+                </p>
+              </div>
+            </div> */}
+            <div className="text-center group">
+              <div className="bg-white rounded-xl p-6 shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-6 h-6 text-purple-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  No Commitments
+                </h4>
+                <p className="text-gray-600 text-sm">
+                  Start and stop anytime you want
+                </p>
+              </div>
+            </div>
+            <div className="text-center group">
+              <div className="bg-white rounded-xl p-6 shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-6 h-6 text-blue-600" />
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  Unlimited Resources
+                </h4>
+                <p className="text-gray-600 text-sm">Use as much as you need</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cost Calculator */}
+          <div className="mt-20 bg-white rounded-2xl shadow-xl p-8 max-w-5xl mx-auto">
+            <h3 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+              Cost Examples
+            </h3>
+            <p className="text-gray-600 text-center mb-12">
+              See how much you could save with our usage-based pricing
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                  <h4 className="font-bold text-gray-800 mb-3">
+                    Small Application
+                  </h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div>• 1 CPU core running 24/7</div>
+                    <div>• 2GB RAM usage</div>
+                    <div>• 1GB network traffic/day</div>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600 mt-4">
+                    ~1,440 birr/month
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
+                  <h4 className="font-bold text-gray-800 mb-3">
+                    Medium Application
+                  </h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div>• 4 CPU cores running 24/7</div>
+                    <div>• 8GB RAM usage</div>
+                    <div>• 5GB network traffic/day</div>
+                  </div>
+                  <div className="text-2xl font-bold text-green-600 mt-4">
+                    ~5,760 birr/month
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+                  <h4 className="font-bold text-gray-800 mb-3">
+                    Large Application
+                  </h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div>• 8 CPU cores running 24/7</div>
+                    <div>• 16GB RAM usage</div>
+                    <div>• 10GB network traffic/day</div>
+                  </div>
+                  <div className="text-2xl font-bold text-purple-600 mt-4">
+                    ~11,520 birr/month
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-100">
+                  <h4 className="font-bold text-gray-800 mb-3">
+                    Development/Testing
+                  </h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div>• 2 CPU cores, 8 hours/day</div>
+                    <div>• 4GB RAM usage</div>
+                    <div>• 500MB network traffic/day</div>
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600 mt-4">
+                    ~480 birr/month
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ScrollFade>
+  );
+};
+
+export default Prices;

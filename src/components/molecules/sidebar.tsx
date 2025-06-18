@@ -9,14 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  Home,
-  Settings,
-  Landmark,
-  Rows3,
-  FilePlus,
-  Shield,
-} from "lucide-react";
+import { Home, Settings, Rows3, FilePlus, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/userStore";
 
@@ -45,11 +38,6 @@ const AppSidebar: React.FC = () => {
       title: "Settings",
       url: "/settings/profile",
       icon: Settings,
-    },
-    {
-      title: "Billings",
-      url: "#",
-      icon: Landmark,
     },
   ];
 
