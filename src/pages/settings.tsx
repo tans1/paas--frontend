@@ -5,6 +5,7 @@ import TextInput from "../components/atoms/textInput";
 import { usePasswordChangeForm } from "../hooks/usePasswordChangeForm";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
+import { Lock, Mail } from "lucide-react";
 
 const Settings = () => {
   const { updatePassword, user } = useUserStore();
@@ -35,47 +36,50 @@ const Settings = () => {
         id: user.id,
       });
       toast.success("Password updated successfully");
-      // Reset form state
       handleChange("currentPassword", "");
       handleChange("newPassword", "");
       handleChange("confirmPassword", "");
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Failed to update password");
-      }
+      toast.error(error instanceof Error ? error.message : "Failed to update password");
     }
   };
 
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="w-full">
+      <main className="w-full min-h-screen bg-gray-50">
         <Navbar />
-        <div className="max-w-4xl mx-auto p-6 space-y-10">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-2">General Settings</h2>
-            <p className="text-sm text-gray-500 mb-6">
+        <div className="max-w-5xl mx-auto p-6 space-y-10">
+          {/* General Settings */}
+          <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center gap-3 mb-4">
+              <Mail className="text-blue-600 w-5 h-5" />
+              <h2 className="text-xl font-semibold">General Settings</h2>
+            </div>
+            <p className="text-sm text-gray-500">
               Your current Primary email address is{" "}
-              <span className="text-blue-600">dashprops@example.com</span>
+              <span className="text-blue-600 font-medium">
+                dashprops@example.com
+              </span>
             </p>
+          </div>
 
-            <h2 className="text-2xl font-bold mb-6">Change your password</h2>
+          {/* Password Change */}
+          <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center gap-3 mb-6">
+              <Lock className="text-blue-600 w-5 h-5" />
+              <h2 className="text-xl font-semibold">Change Your Password</h2>
+            </div>
 
             <form onSubmit={handlePasswordChange} className="space-y-6">
               <TextInput
                 label="Current password"
                 type={showPassword.current ? "text" : "password"}
                 value={currentPassword}
-                onChange={(e) =>
-                  handleChange("currentPassword", e.target.value)
-                }
+                onChange={(e) => handleChange("currentPassword", e.target.value)}
                 error={errors.currentPassword}
                 placeholder="********"
-                togglePasswordVisibility={() =>
-                  togglePasswordVisibility("current")
-                }
+                togglePasswordVisibility={() => togglePasswordVisibility("current")}
                 name="currentPassword"
               />
 
@@ -94,18 +98,14 @@ const Settings = () => {
                 label="Confirm new password"
                 type={showPassword.confirm ? "text" : "password"}
                 value={confirmPassword}
-                onChange={(e) =>
-                  handleChange("confirmPassword", e.target.value)
-                }
+                onChange={(e) => handleChange("confirmPassword", e.target.value)}
                 error={errors.confirmPassword}
                 placeholder="********"
-                togglePasswordVisibility={() =>
-                  togglePasswordVisibility("confirm")
-                }
+                togglePasswordVisibility={() => togglePasswordVisibility("confirm")}
                 name="confirmPassword"
               />
 
-              <div className="text-sm text-gray-500 mt-2 space-y-1">
+              <div className="text-sm text-gray-500 mt-4 space-y-1 border-t border-gray-100 pt-4">
                 <p className="font-semibold">Password requirements:</p>
                 <ul className="list-disc list-inside">
                   <li>Minimum 8 characters long</li>
@@ -119,7 +119,7 @@ const Settings = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`mt-4 w-full text-white font-medium py-2 px-4 rounded-md transition duration-300 ${
+                className={`mt-6 w-full text-white font-medium py-2.5 px-4 rounded-lg transition duration-300 ${
                   isFormValid
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-gray-400 cursor-not-allowed"
@@ -130,9 +130,7 @@ const Settings = () => {
             </form>
 
             {successMessage && (
-              <p className="text-green-600 mt-4 text-center">
-                {successMessage}
-              </p>
+              <p className="text-green-600 mt-4 text-center">{successMessage}</p>
             )}
             {errorMessage && (
               <p className="text-red-600 mt-4 text-center">{errorMessage}</p>
