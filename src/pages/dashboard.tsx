@@ -137,7 +137,7 @@ const Dashboard = () => {
             <Activity className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <div className="text-3xl font-bold">{projects.filter(p => p.status === 'active').length}</div>
+            <div className="text-3xl font-bold">{projects.filter(p => p.status === 'RUNNING').length}</div>
             <p className="text-xs text-gray-500 mt-1">Currently running</p>
           </div>
         </div>
@@ -193,7 +193,7 @@ const Dashboard = () => {
         <div className="p-6 pb-4 flex justify-between items-center">
           <div className="text-lg font-medium">Active Projects</div>
           <button
-            onClick={() => navigate('/dashboard/add-project')}
+            onClick={() => navigate('/dashboard/project/add')}
             className="border border-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -217,14 +217,14 @@ const Dashboard = () => {
                       <div className="flex items-center space-x-3 text-sm text-gray-500">
                         <span className="flex items-center">
                           <Calendar className="w-3 h-3 mr-1" />
-                          {new Date(project.deployedAt).toDateString()}
+                          {new Date(project.createdAt).toDateString()}
                         </span>
                         <span className="border border-gray-300 px-2 py-0.5 rounded text-xs">
-                          {project.language ?? 'N/A'}
+                          {project.framework ?? 'N/A'}
                         </span>
                         <span
                           className={`px-2 py-0.5 rounded text-xs font-medium ${
-                            project.status === 'active'
+                            project.status === 'RUNNING'
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-200 text-gray-700'
                           }`}
@@ -236,7 +236,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <a
-                      href={project.link}
+                      href={project.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-gray-600 hover:text-gray-800 px-2 py-1 text-sm flex items-center transition-colors"
@@ -264,7 +264,7 @@ const Dashboard = () => {
               <FolderOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No active projects yet</p>
               <button
-                onClick={() => navigate('/dashboard/add-project')}
+                onClick={() => navigate('/dashboard/project/add')}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center mx-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />

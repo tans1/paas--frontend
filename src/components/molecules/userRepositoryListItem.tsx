@@ -27,6 +27,7 @@ export default function UserRepositoryListItem({
 }: Props) {
   const navigate = useNavigate();
   const { setToBeDeployedProject } = useDashboardStore();
+
   const handleDeployment = () => {
     setToBeDeployedProject({
       id,
@@ -40,30 +41,32 @@ export default function UserRepositoryListItem({
     });
     navigate("/dashboard/deploy");
   };
+
   return (
-    <TableRow className="cursor-pointer w-full" onClick={handleDeployment}>
-      <TableCell className="font-bold w-[50%]">{repoName}</TableCell>
-      <TableCell className="w-[15%]">
-        <div className="flex flex-col gap-3">
-          <p className="text-sm flex items-center">
-            <span>
-              <GitBranch className="w-4 mr-1" />
-            </span>
-            {default_branch}
-          </p>
+    <TableRow
+      className="cursor-pointer transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800" // Added hover effect
+      onClick={handleDeployment}
+    >
+      <TableCell className="font-semibold text-base w-[45%] py-3"> {/* Slightly larger and bolder */}
+        {repoName}
+      </TableCell>
+
+      <TableCell className="w-[18%] py-3">
+        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400"> {/* Smaller text, subtle color */}
+          <GitBranch className="w-4 h-4 mr-1 text-blue-500" /> {/* Icon color for emphasis */}
+          {default_branch}
         </div>
       </TableCell>
 
-      <TableCell className="w-[15%]">
-        <span className="flex items-center">
-          <GitCommitHorizontal className="w-4 mr-1" />
+      <TableCell className="w-[18%] py-3">
+        <span className="flex items-center text-sm text-gray-600 dark:text-gray-400"> {/* Smaller text, subtle color */}
+          <GitCommitHorizontal className="w-4 h-4 mr-1 text-purple-500" /> {/* Icon color for emphasis */}
           {language}
         </span>
       </TableCell>
 
-      <TableCell className="text-start">
-        {/* <span>Created at : </span> */}
-        {dateFormat(created_at, "mmmm dS, yyyy")}
+      <TableCell className="text-right text-sm text-gray-600 dark:text-gray-400 py-3"> {/* Aligned right for dates, smaller text */}
+        {dateFormat(created_at, "mmm d, yyyy")} {/* Simplified date format for readability */}
       </TableCell>
     </TableRow>
   );
